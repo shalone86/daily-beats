@@ -5,13 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Shalone's Daily Beats — Public Domain Music Archive</title>
-  <meta name="description" content="Shalone's beat vault and daily music challenge released under CC0 Public Domain for all creative works." />
+  <meta name="description" content="Beat vault and daily music challenge released under CC0 Public Domain for all creative works." />
   <link rel="canonical" href="https://shalonely.com/" />
 
   <!-- Open Graph -->
   <meta property="og:url" content="https://shalonely.com/" />
   <meta property="og:title" content="Shalone's Daily Beats — Public Domain Music Archive" />
-  <meta property="og:description" content="Shalone's beat vault and daily music challenge released under CC0 Public Domain for all creative works." />
+  <meta property="og:description" content="Beat vault and daily music challenge released under CC0 Public Domain for all creative works." />
   <meta property="og:type" content="website" />
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -41,13 +41,13 @@
       background-color: var(--bg);
       color: var(--text);
       line-height: 1.6;
-      padding-bottom: 5.5rem;
+      padding-bottom: 6rem;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    /* STICKY NAV */
+    /* STICKY NAV (DECLUTTERED, NO EMOJIS) */
     .sticky-nav {
       position: sticky;
       top: 0;
@@ -58,7 +58,7 @@
       padding: 0.75rem 1rem;
       display: flex;
       justify-content: center;
-      gap: 1.25rem;
+      gap: 1.5rem;
       flex-wrap: wrap;
       align-items: center;
       font-family: var(--font-sans);
@@ -66,7 +66,7 @@
     .sticky-nav a {
       color: var(--muted);
       text-decoration: none;
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       font-weight: 500;
       transition: color 0.2s;
     }
@@ -82,23 +82,28 @@
 
     /* HEADER & HERO */
     header {
-      padding: 3rem 0 1.5rem 0;
+      padding: 2rem 0 1.25rem 0;
       text-align: center;
     }
     .site-title { 
       font-family: var(--font-heading);
-      font-size: 2.1rem; 
+      font-size: 1.5rem; 
       color: var(--accent); 
-      margin-bottom: 0.75rem; 
+      margin-bottom: 0.5rem; 
       letter-spacing: 0.04em; 
     }
+    @media (max-width: 600px) {
+      .site-title { font-size: 1.25rem; }
+      header { padding: 1.25rem 0 1rem 0; }
+    }
+
     .hero-mission { 
       font-family: var(--font-serif);
       color: var(--text); 
-      font-size: 1.15rem; 
+      font-size: 1.1rem; 
       max-width: 720px; 
-      margin: 0 auto 1.5rem auto; 
-      line-height: 1.7; 
+      margin: 0 auto 1.25rem auto; 
+      line-height: 1.6; 
     }
 
     /* PROGRESS CARD */
@@ -107,12 +112,12 @@
       border: 1px solid var(--border);
       border-radius: 8px;
       padding: 1.25rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       text-align: center;
     }
     .progress-title {
       font-family: var(--font-serif);
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       font-weight: 600;
       color: var(--text);
     }
@@ -144,30 +149,6 @@
       transition: all 0.2s;
     }
     .btn-calendar:hover { background: var(--accent); color: #000; }
-
-    /* GENRE FILTER BUTTONS */
-    .genre-filter-group {
-      display: flex;
-      justify-content: center;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 1.5rem;
-    }
-    .btn-genre {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      padding: 0.4rem 0.9rem;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      transition: all 0.2s;
-    }
-    .btn-genre:hover, .btn-genre.active {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: rgba(212, 175, 55, 0.1);
-    }
 
     /* CONTROLS & SEARCH */
     .controls-row {
@@ -260,7 +241,7 @@
       border-radius: 4px;
     }
 
-    /* HIGHLIGHTED CHORDS BOX */
+    /* HIGHLIGHTED CHORDS BOX (NO EMOJI) */
     .chords-box {
       background: rgba(212, 175, 55, 0.08);
       border-left: 3px solid var(--accent);
@@ -271,7 +252,7 @@
       font-family: monospace;
     }
 
-    /* HIGHLIGHTED LYRICS BOX (SANS-SERIF) */
+    /* HIGHLIGHTED LYRICS BOX (NO EMOJI, SANS-SERIF) */
     .lyrics-box {
       background: rgba(255, 255, 255, 0.03);
       border-left: 3px solid #8ea2bc;
@@ -324,7 +305,7 @@
     }
     .btn-download:hover { border-color: var(--text); color: var(--text); }
 
-    /* FLOATING NOW PLAYING BAR */
+    /* ALWAYS-VISIBLE PERSISTENT MINI PLAYER */
     .now-playing-bar {
       position: fixed;
       bottom: 0;
@@ -335,9 +316,9 @@
       backdrop-filter: blur(12px);
       border-top: 1px solid var(--accent);
       padding: 0.6rem 1.2rem;
-      display: none;
+      display: flex;
       align-items: center;
-      gap: 1.25rem;
+      gap: 1rem;
       box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
       font-family: var(--font-sans);
     }
@@ -515,20 +496,17 @@
 
   <!-- STICKY NAV -->
   <nav class="sticky-nav">
-    <a href="#" onclick="setGenreFilter('Lofi'); return false;">Lofi</a>
-    <a href="#" onclick="setGenreFilter('Hip-Hop'); return false;">Hip-Hop</a>
-    <a href="#" onclick="setGenreFilter('Pop'); return false;">Pop</a>
-    <a href="#" onclick="setGenreFilter('Electronic'); return false;">Electronic</a>
-    <a href="#" onclick="triggerShuffle(event)" style="color: var(--accent); font-weight: 600;">🔀 Shuffle</a>
-    <a href="mailto:hello@shalonely.com" style="color: var(--text);">Contact</a>
-    <a href="https://donate.stripe.com/bJe9ATgAFgOjaCq1TlcV200" target="_blank" rel="noopener" style="color: var(--accent);">✝ Support</a>
+    <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">Home</a>
+    <a href="#" onclick="triggerShuffle(event); return false;">Shuffle</a>
+    <a href="mailto:hello@shalonely.com">Contact</a>
+    <a href="https://donate.stripe.com/bJe9ATgAFgOjaCq1TlcV200" target="_blank" rel="noopener" style="color: var(--accent);">Support</a>
   </nav>
 
   <div class="container">
     <header>
-      <h1 class="site-title">Shalone Cason's Daily Beats</h1>
+      <h1 class="site-title">Shalone's Daily Beats</h1>
       <p class="hero-mission">
-        Shalone's beat vault & daily composition archive. Released under CC0 Public Domain for all creative works.
+        Beat vault & daily composition archive. Released under CC0 Public Domain for all creative works.
       </p>
     </header>
 
@@ -537,40 +515,31 @@
       <div class="progress-bar-bg">
         <div class="progress-fill" id="progress-fill"></div>
       </div>
-      <button class="btn-calendar" onclick="toggleCalendarModal(true)">📅 View Monthly Calendar</button>
-    </div>
-
-    <!-- GENRE CATEGORY BUTTONS -->
-    <div class="genre-filter-group">
-      <button class="btn-genre active" onclick="setGenreFilter('All', this)">All Beats</button>
-      <button class="btn-genre" onclick="setGenreFilter('Lofi', this)">Lofi</button>
-      <button class="btn-genre" onclick="setGenreFilter('Hip-Hop', this)">Hip-Hop</button>
-      <button class="btn-genre" onclick="setGenreFilter('Pop', this)">Pop</button>
-      <button class="btn-genre" onclick="setGenreFilter('Electronic', this)">Electronic</button>
+      <button class="btn-calendar" onclick="toggleCalendarModal(true)">View Monthly Calendar</button>
     </div>
 
     <div class="controls-row">
-      <input type="text" id="search-input" class="search-input" placeholder="🔍 Search track name, BPM, Key, Chords..." oninput="renderTracks()" />
-      <button class="sort-btn" onclick="setSort('day')">📅 Day (Newest First)</button>
-      <button class="sort-btn" onclick="setSort('title')">🔤 Title</button>
-      <button class="sort-btn" onclick="triggerShuffle(event)" style="color: var(--accent);">🔀 Shuffle</button>
+      <input type="text" id="search-input" class="search-input" placeholder="Search title, BPM, Key, Chords..." oninput="renderTracks()" />
+      <button class="sort-btn" id="sort-day-btn" onclick="setSort('day')">Day ↑ (Newest)</button>
+      <button class="sort-btn" id="sort-title-btn" onclick="setSort('title')">Title</button>
+      <button class="sort-btn" onclick="triggerShuffle(event)" style="color: var(--accent);">Shuffle</button>
     </div>
 
     <div id="track-list" class="track-list"></div>
   </div>
 
-  <!-- FLOATING NOW PLAYING BAR -->
+  <!-- PERSISTENT MINI PLAYER -->
   <div class="now-playing-bar" id="now-playing-bar">
     <div class="np-controls">
       <button class="btn-np" onclick="playPrevTrack()">⏮</button>
-      <button class="btn-np-toggle" id="btn-np-toggle" onclick="toggleNowPlaying()">⏸</button>
+      <button class="btn-np-toggle" id="btn-np-toggle" onclick="toggleNowPlaying()">▶</button>
       <button class="btn-np" onclick="playNextTrack()">⏭</button>
     </div>
 
     <div class="np-center-info">
       <div class="np-meta-row">
         <span class="np-symbol">⁜</span>
-        <span class="np-title" id="np-title">Select a track...</span>
+        <span class="np-title" id="np-title">Tap Shuffle or Play to start</span>
       </div>
       <div class="np-progress-row">
         <span class="np-time" id="np-time-curr">00:00</span>
@@ -616,14 +585,20 @@
     ];
 
     let songs = [];
-    let currentShufflePool = [];
     let isShuffleActive = false;
     let currentTrackIndex = -1;
     let currentSort = 'day';
     let sortAsc = false;
-    let activeGenre = 'All';
 
     const audio = new Audio();
+
+    function getBpmCategory(bpmStr) {
+      const val = parseInt(bpmStr, 10);
+      if (isNaN(val) || val <= 0) return "";
+      if (val < 85) return "Slow";
+      if (val <= 115) return "Mid";
+      return "Fast";
+    }
 
     function toggleCalendarModal(show) {
       document.getElementById('calendar-modal').style.display = show ? 'flex' : 'none';
@@ -660,14 +635,16 @@
         catalogData.forEach(album => {
           if (album.tracks && album.tracks.length > 0) {
             album.tracks.forEach(t => {
+              const bpmVal = t.bpm || "";
               songs.push({
                 title: t.title,
                 day: parseInt(t.day, 10) || 0,
-                bpm: t.bpm || "",
+                bpm: bpmVal,
+                bpmCategory: getBpmCategory(bpmVal),
                 key: t.key || "",
                 chords: t.chords || "",
                 lyrics: t.lyrics || "",
-                genre: t.genre || "Lofi",
+                genre: t.genre || "",
                 description: t.description || "",
                 url: `${MEDIA_BASE}/${encodeURI(t.path)}`
               });
@@ -691,19 +668,6 @@
       document.getElementById('progress-fill').style.width = pct + '%';
     }
 
-    function setGenreFilter(genre, btn) {
-      activeGenre = genre;
-      document.querySelectorAll('.btn-genre').forEach(b => {
-        const btnText = b.textContent.trim().toLowerCase();
-        if (btnText === genre.toLowerCase() || (genre === 'All' && btnText.includes('all'))) {
-          b.classList.add('active');
-        } else {
-          b.classList.remove('active');
-        }
-      });
-      renderTracks();
-    }
-
     function setSort(field) {
       if (currentSort === field) {
         sortAsc = !sortAsc;
@@ -711,16 +675,20 @@
         currentSort = field;
         sortAsc = field === 'title' ? true : false;
       }
-      renderTracks();
-    }
 
-    function cleanFrontendNoise(text) {
-      if (!text) return "";
-      return text
-        .replace(/\b[0-9A-Fa-f]{6,32}\b/g, '')
-        .replace(/\s+/g, ' ')
-        .replace(/^[\s|]+|[\s|]+$/g, '')
-        .trim();
+      // Dynamic toggle label updates
+      const dayBtn = document.getElementById('sort-day-btn');
+      const titleBtn = document.getElementById('sort-title-btn');
+
+      if (currentSort === 'day') {
+        dayBtn.textContent = sortAsc ? "Day ↓ (Oldest)" : "Day ↑ (Newest)";
+        titleBtn.textContent = "Title";
+      } else {
+        titleBtn.textContent = sortAsc ? "Title A-Z" : "Title Z-A";
+        dayBtn.textContent = "Day";
+      }
+
+      renderTracks();
     }
 
     function renderTracks() {
@@ -729,15 +697,17 @@
       listEl.innerHTML = '';
 
       let filtered = songs.filter(s => {
-        const matchesGenre = activeGenre === 'All' || s.genre.toLowerCase() === activeGenre.toLowerCase();
-        const matchesQuery = !query || 
+        if (!query) return true;
+        return (
           s.title.toLowerCase().includes(query) ||
           s.bpm.toLowerCase().includes(query) ||
+          s.bpmCategory.toLowerCase().includes(query) ||
           s.key.toLowerCase().includes(query) ||
           s.chords.toLowerCase().includes(query) ||
           s.lyrics.toLowerCase().includes(query) ||
-          s.description.toLowerCase().includes(query);
-        return matchesGenre && matchesQuery;
+          s.genre.toLowerCase().includes(query) ||
+          s.description.toLowerCase().includes(query)
+        );
       });
 
       filtered.sort((a, b) => {
@@ -753,21 +723,13 @@
         card.className = 'track-card';
         card.id = `track-day-${song.day}`;
 
-        const chordsHtml = song.chords ? `<div class="chords-box">🎼 Chords: ${song.chords}</div>` : '';
-        const lyricsHtml = song.lyrics ? `<div class="lyrics-box">📜 <strong>Lyrics:</strong> ${song.lyrics}</div>` : '';
+        const chordsHtml = song.chords ? `<div class="chords-box">Chords: ${song.chords}</div>` : '';
+        const lyricsHtml = song.lyrics ? `<div class="lyrics-box"><strong>Lyrics:</strong> ${song.lyrics}</div>` : '';
         const dayHtml = song.day > 0 ? `<span class="day-badge">Day ${song.day}</span>` : '';
-        const bpmHtml = song.bpm ? `<span class="meta-badge">🥁 ${song.bpm} BPM</span>` : '';
-        const keyHtml = song.key ? `<span class="meta-badge">🎼 Key: ${song.key}</span>` : '';
-        const genreHtml = song.genre ? `<span class="meta-badge">🏷️ ${song.genre}</span>` : '';
-
-        let cleanDesc = song.description || "";
-        if (song.chords) {
-          cleanDesc = cleanDesc.replace(/\bchords?:\s*[^\n|]+/gi, '').replace(/\|\s*\|/g, '|').trim();
-        }
-        if (song.lyrics) {
-          cleanDesc = cleanDesc.replace(/\blyrics?:\s*(.*?)(?=\b(?:bpm|key|chords):|$)/gi, '').trim();
-        }
-        cleanDesc = cleanFrontendNoise(cleanDesc);
+        
+        const bpmHtml = song.bpm ? `<span class="meta-badge">${song.bpmCategory ? song.bpmCategory + ' · ' : ''}${song.bpm} BPM</span>` : '';
+        const keyHtml = song.key ? `<span class="meta-badge">Key: ${song.key}</span>` : '';
+        const genreHtml = song.genre ? `<span class="meta-badge">${song.genre}</span>` : '';
 
         card.innerHTML = `
           <div class="track-header">
@@ -783,13 +745,13 @@
           </div>
           ${chordsHtml}
           ${lyricsHtml}
-          ${cleanDesc ? `<div class="track-desc">${cleanDesc}</div>` : ''}
+          ${song.description ? `<div class="track-desc">${song.description}</div>` : ''}
           <div class="track-actions">
-            <button class="play-btn" onclick="playTrackByIndex(${globalIdx})">▶ Play</button>
+            <button class="play-btn" onclick="playTrackByIndex(${globalIdx})">Play</button>
             <button class="btn-download" 
                     data-url="${song.url}" 
                     data-filename="${song.title}.mp3" 
-                    onclick="triggerDirectDownload(event)">↓ MP3</button>
+                    onclick="triggerDirectDownload(event)">MP3</button>
           </div>
         `;
         listEl.appendChild(card);
@@ -865,16 +827,12 @@
 
       audio.src = track.url;
       document.getElementById('np-title').textContent = `${track.day > 0 ? 'Day ' + track.day + ' - ' : ''}${track.title}`;
-      document.getElementById('now-playing-bar').style.display = 'flex';
-
       audio.play();
     }
 
     function triggerShuffle(e) {
       if (e) e.preventDefault();
       if (songs.length === 0) return;
-
-      currentShufflePool = [...songs];
       isShuffleActive = true;
       playRandomTrack();
     }
@@ -887,7 +845,7 @@
 
     function playNextTrack() {
       if (songs.length === 0) return;
-      if (isShuffleActive) {
+      if (isShuffleActive || currentTrackIndex === -1) {
         playRandomTrack();
       } else {
         const nextIdx = (currentTrackIndex + 1) % songs.length;
@@ -897,7 +855,7 @@
 
     function playPrevTrack() {
       if (songs.length === 0) return;
-      if (isShuffleActive) {
+      if (isShuffleActive || currentTrackIndex === -1) {
         playRandomTrack();
       } else {
         const prevIdx = (currentTrackIndex - 1 + songs.length) % songs.length;
@@ -906,7 +864,10 @@
     }
 
     function toggleNowPlaying() {
-      if (!audio.src) return;
+      if (currentTrackIndex === -1) {
+        triggerShuffle();
+        return;
+      }
       if (audio.paused) {
         audio.play();
       } else {
@@ -929,7 +890,7 @@
       const filename = btn.dataset.filename;
       const originalText = btn.textContent;
 
-      btn.textContent = "⏳...";
+      btn.textContent = "...";
 
       try {
         const response = await fetch(url);
