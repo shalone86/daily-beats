@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Daily Beats — Public Domain Music Archive</title>
+  <meta name="description" content="Beat vault and daily music challenge released under CC0 Public Domain for all creative works." />
+  <link rel="canonical" href="https://dailybeats.com/" />
+
+  <!-- Open Graph -->
+  <meta property="og:url" content="https://dailybeats.com/" />
+  <meta property="og:title" content="Daily Beats — Public Domain Music Archive" />
+  <meta property="og:description" content="Beat vault and daily music challenge released under CC0 Public Domain for all creative works." />
+  <meta property="og:type" content="website" />
+
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- Google Fonts for Liturgical / Classical Serif Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #121214;
+      --card-bg: #1b1b1e;
+      --border: #2e2e34;
+      --text: #e4e4e7;
+      --muted: #a1a1aa;
+      --accent: #d4af37;
+      --accent-hover: #f1c40f;
+      --font-heading: 'Cinzel', Georgia, serif;
+      --font-serif: 'Cormorant Garamond', Georgia, serif;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: 5.5rem;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* STICKY NAV */
+    .sticky-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(18, 18, 20, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 0.75rem 1rem;
+      display: flex;
+      justify-content: center;
+      gap: 1.25rem;
+      flex-wrap: wrap;
+      align-items: center;
+      font-family: var(--font-sans);
+    }
+    .sticky-nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .sticky-nav a:hover { color: var(--accent); }
+
+    .container {
+      max-width: 850px;
+      margin: 0 auto;
+      padding: 0 1rem;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* HEADER & HERO */
+    header {
+      padding: 3rem 0 1.5rem 0;
+      text-align: center;
+    }
+    .site-title { 
+      font-family: var(--font-heading);
+      font-size: 2.1rem; 
+      color: var(--accent); 
+      margin-bottom: 0.75rem; 
+      letter-spacing: 0.04em; 
+    }
+    .hero-mission { 
+      font-family: var(--font-serif);
+      color: var(--text); 
+      font-size: 1.15rem; 
+      max-width: 720px; 
+      margin: 0 auto 1.5rem auto; 
+      line-height: 1.7; 
+    }
+
+    /* PROGRESS CARD */
+    .progress-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+    .progress-title {
+      font-family: var(--font-serif);
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .progress-bar-bg {
+      background: rgba(212, 175, 55, 0.15);
+      border-radius: 6px;
+      height: 16px;
+      overflow: hidden;
+      margin-top: 0.75rem;
+      border: 1px solid var(--border);
+    }
+    .progress-fill { 
+      background: var(--accent); 
+      height: 100%; 
+      width: 0%; 
+      transition: width 0.4s ease; 
+    }
+
+    /* CONTROLS & SEARCH */
+    .controls-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+      align-items: center;
+    }
+    .search-input {
+      flex: 1 1 200px;
+      padding: 0.75rem 1rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: var(--font-sans);
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--muted); }
+
+    .sort-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-family: var(--font-sans);
+      transition: all 0.2s;
+    }
+    .sort-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* TRACK CARDS */
+    .track-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .track-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      transition: border-color 0.2s;
+    }
+    .track-card:hover { border-color: rgba(212, 175, 55, 0.4); }
+    .track-info { flex: 1 1 200px; }
+    .track-title { 
+      font-family: var(--font-serif);
+      font-size: 1.2rem; 
+      font-weight: 600; 
+      color: var(--text); 
+    }
+    
+    .track-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .play-btn {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      padding: 0.45rem 1rem;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-family: var(--font-sans);
+      transition: background 0.2s;
+    }
+    .play-btn:hover { background: var(--accent-hover); }
+
+    .btn-download {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.45rem 0.85rem;
+      font-size: 0.85rem;
+      border-radius: 4px;
+      white-space: nowrap;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      transition: all 0.2s;
+    }
+    .btn-download:hover { border-color: var(--text); color: var(--text); }
+
+    /* FLOATING NOW PLAYING BAR */
+    .now-playing-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 200;
+      background: rgba(27, 27, 30, 0.96);
+      backdrop-filter: blur(12px);
+      border-top: 1px solid var(--accent);
+      padding: 0.6rem 1.2rem;
+      display: none;
+      align-items: center;
+      gap: 1.25rem;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+      font-family: var(--font-sans);
+    }
+    .np-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .btn-np {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-size: 0.85rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .btn-np:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-np-toggle {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .btn-np-toggle:hover { background: var(--accent-hover); }
+
+    .np-center-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      overflow: hidden;
+    }
+    .np-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      overflow: hidden;
+    }
+    .np-symbol { color: var(--accent); font-size: 1.1rem; }
+    .np-title { font-weight: 600; font-size: 0.88rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .np-progress-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .np-time { font-size: 0.72rem; color: var(--muted); font-family: monospace; min-width: 38px; }
+    .np-progress-bg {
+      flex: 1;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .np-progress-fill {
+      height: 100%;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    /* FOOTER & MODAL */
+    footer {
+      text-align: center;
+      border-top: 1px solid var(--border);
+      padding: 2rem 1rem;
+      margin-top: 4rem;
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-family: var(--font-sans);
+    }
+    footer a { color: var(--muted); text-decoration: underline; }
+    footer a:hover { color: var(--accent); }
+
+    .btn-modal-trigger {
+      background: none;
+      border: none;
+      color: var(--accent);
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 0.85rem;
+      margin-top: 0.5rem;
+      font-family: var(--font-sans);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 1000;
+      font-family: var(--font-sans);
+    }
+    .modal-content {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      max-width: 500px;
+      width: 100%;
+      padding: 2rem;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .btn-modal-close {
+      margin-top: 1.5rem;
+      background: var(--card-bg);
+      color: var(--text);
+      border: 1px solid var(--accent);
+      padding: 0.5rem 1.2rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-modal-close:hover {
+      background: var(--accent);
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- STICKY NAV -->
+  <nav class="sticky-nav">
+    <a href="#track-list">Beats</a>
+    <a href="#" onclick="triggerShuffle(event)" style="color: var(--accent); font-weight: 600;">🔀 Shuffle</a>
+    <a href="https://donorbox.org/methodius" target="_blank" rel="noopener" style="color: var(--accent);">✝ Support</a>
+  </nav>
+
+  <div class="container">
+    <header>
+      <h1 class="site-title">⁜ Daily Beats</h1>
+      <p class="hero-mission">
+        Beat vault & daily composition archive. Released under CC0 Public Domain for all creative works.
+      </p>
+    </header>
+
+    <div class="progress-card">
+      <div class="progress-title">Daily Challenge Progress: <span id="completed-count">0</span> / 365 Days</div>
+      <div class="progress-bar-bg">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+
+    <div class="controls-row">
+      <input type="text" id="search-input" class="search-input" placeholder="🔍 Search tracks..." oninput="renderTracks()" />
+      <button class="sort-btn" onclick="setSort('trackNum')">🔢 Track #</button>
+      <button class="sort-btn" onclick="setSort('title')">🔤 Title</button>
+      <button class="sort-btn" onclick="triggerShuffle(event)" style="color: var(--accent);">🔀 Shuffle</button>
+    </div>
+
+    <div id="track-list" class="track-list"></div>
+
+    <footer>
+      <p>© Daily Beats · CC0 Public Domain · All freely given for AMDG</p>
+      <p style="margin-top: 0.5rem;">
+        <button class="btn-modal-trigger" onclick="toggleModal(true)">Physical Media & Sharing Permission</button>
+      </p>
+      <p style="margin-top: 0.5rem;">
+        <a href="mailto:hello@dailybeats.com">Contact & Inquiries</a>
+      </p>
+    </footer>
+  </div>
+
+  <!-- FLOATING NOW PLAYING BAR -->
+  <div class="now-playing-bar" id="now-playing-bar">
+    <div class="np-controls">
+      <button class="btn-np" onclick="playPrevTrack()">⏮</button>
+      <button class="btn-np-toggle" id="btn-np-toggle" onclick="toggleNowPlaying()">⏸</button>
+      <button class="btn-np" onclick="playNextTrack()">⏭</button>
+    </div>
+
+    <div class="np-center-info">
+      <div class="np-meta-row">
+        <span class="np-symbol">⁜</span>
+        <span class="np-title" id="np-title">Select a track...</span>
+      </div>
+      <div class="np-progress-row">
+        <span class="np-time" id="np-time-curr">00:00</span>
+        <div class="np-progress-bg" id="np-progress-bg" onclick="seekAudio(event)">
+          <div class="np-progress-fill" id="np-progress-fill"></div>
+        </div>
+        <span class="np-time" id="np-time-dur">00:00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERMISSION MODAL -->
+  <div class="modal" id="permission-modal">
+    <div class="modal-content">
+      <h3 style="color: var(--accent); margin-bottom: 1rem; font-family: var(--font-heading);">Explicit Permission Granted</h3>
+      <p>We encourage you to download our music and burn or press it onto CDs, cassette tapes, vinyl, or any physical media of your choice for personal listening and sharing. We give explicit permission for that purpose.</p>
+      <button class="btn-modal-close" onclick="toggleModal(false)">Close</button>
+    </div>
+  </div>
+
+  <script>
+    const MEDIA_BASE = "https://media.dailybeats.com";
+    const CATALOG_URL = `${MEDIA_BASE}/catalog.json`;
+
+    let songs = [];
+    let currentShufflePool = [];
+    let isShuffleActive = false;
+    let currentTrackIndex = -1;
+    let currentSort = 'trackNum';
+    let sortAsc = true;
+
+    const audio = new Audio();
+
+    function toggleModal(show) {
+      document.getElementById('permission-modal').style.display = show ? 'flex' : 'none';
+    }
+
+    function formatTime(seconds) {
+      if (isNaN(seconds) || seconds < 0) return "00:00";
+      const m = Math.floor(seconds / 60);
+      const s = Math.floor(seconds % 60);
+      return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    async function loadCatalog() {
+      try {
+        const res = await fetch(CATALOG_URL);
+        const catalogData = await res.json();
+        
+        songs = [];
+        catalogData.forEach(album => {
+          if (album.tracks && album.tracks.length > 0) {
+            album.tracks.forEach(t => {
+              songs.push({
+                title: t.title,
+                trackNum: t.trackNum || 999,
+                url: `${MEDIA_BASE}/${encodeURI(t.path)}`
+              });
+            });
+          }
+        });
+
+        updateProgress();
+        renderTracks();
+      } catch (err) {
+        console.error("Error loading catalog:", err);
+      }
+    }
+
+    function updateProgress() {
+      const count = songs.length;
+      document.getElementById('completed-count').textContent = count;
+      // Allow count to go above 365, while capping visual bar at 100%
+      const pct = Math.min(Math.round((count / 365) * 100), 100);
+      document.getElementById('progress-fill').style.width = pct + '%';
+    }
+
+    function setSort(field) {
+      if (currentSort === field) {
+        sortAsc = !sortAsc;
+      } else {
+        currentSort = field;
+        sortAsc = true;
+      }
+      renderTracks();
+    }
+
+    function renderTracks() {
+      const query = document.getElementById('search-input').value.toLowerCase().trim();
+      const listEl = document.getElementById('track-list');
+      listEl.innerHTML = '';
+
+      let filtered = songs.filter(s => s.title.toLowerCase().includes(query));
+
+      filtered.sort((a, b) => {
+        let valA = a[currentSort] || '';
+        let valB = b[currentSort] || '';
+        
+        if (typeof valA === 'number' && typeof valB === 'number') {
+          return sortAsc ? valA - valB : valB - valA;
+        }
+        return sortAsc ? String(valA).localeCompare(String(valB)) : String(valB).localeCompare(String(valA));
+      });
+
+      filtered.forEach(song => {
+        const globalIdx = songs.indexOf(song);
+        const card = document.createElement('div');
+        card.className = 'track-card';
+        card.innerHTML = `
+          <div class="track-info">
+            <div class="track-title">${song.trackNum !== 999 ? song.trackNum + '. ' : ''}${song.title}</div>
+          </div>
+          <div class="track-actions">
+            <button class="play-btn" onclick="playTrackByIndex(${globalIdx})">▶ Play</button>
+            <button class="btn-download" 
+                    data-url="${song.url}" 
+                    data-filename="${song.title}.mp3" 
+                    onclick="triggerDirectDownload(event)">↓ MP3</button>
+          </div>
+        `;
+        listEl.appendChild(card);
+      });
+    }
+
+    function playTrackByIndex(index) {
+      if (index < 0 || index >= songs.length) return;
+      currentTrackIndex = index;
+      const track = songs[currentTrackIndex];
+
+      audio.src = track.url;
+      document.getElementById('np-title').textContent = track.title;
+      document.getElementById('now-playing-bar').style.display = 'flex';
+
+      audio.play();
+    }
+
+    function triggerShuffle(e) {
+      if (e) e.preventDefault();
+      if (songs.length === 0) return;
+
+      currentShufflePool = [...songs];
+      isShuffleActive = true;
+      playRandomTrack();
+    }
+
+    function playRandomTrack() {
+      if (songs.length === 0) return;
+      const randomIdx = Math.floor(Math.random() * songs.length);
+      playTrackByIndex(randomIdx);
+    }
+
+    function playNextTrack() {
+      if (songs.length === 0) return;
+      if (isShuffleActive) {
+        playRandomTrack();
+      } else {
+        const nextIdx = (currentTrackIndex + 1) % songs.length;
+        playTrackByIndex(nextIdx);
+      }
+    }
+
+    function playPrevTrack() {
+      if (songs.length === 0) return;
+      if (isShuffleActive) {
+        playRandomTrack();
+      } else {
+        const prevIdx = (currentTrackIndex - 1 + songs.length) % songs.length;
+        playTrackByIndex(prevIdx);
+      }
+    }
+
+    function toggleNowPlaying() {
+      if (!audio.src) return;
+      if (audio.paused) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+    }
+
+    function seekAudio(e) {
+      if (!audio.duration) return;
+      const rect = e.currentTarget.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const width = rect.width;
+      audio.currentTime = (clickX / width) * audio.duration;
+    }
+
+    async function triggerDirectDownload(e) {
+      e.preventDefault();
+      const btn = e.currentTarget;
+      const url = btn.dataset.url;
+      const filename = btn.dataset.filename;
+      const originalText = btn.textContent;
+
+      btn.textContent = "⏳...";
+
+      try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const blobUrl = URL.createObjectURL(blob);
+
+        const link = document.createElement('a');
+        link.href = blobUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(blobUrl);
+      } catch (err) {
+        window.open(url, '_blank');
+      } finally {
+        btn.textContent = originalText;
+      }
+    }
+
+    // Audio Listeners
+    audio.addEventListener('play', () => {
+      document.getElementById('btn-np-toggle').textContent = "⏸";
+    });
+
+    audio.addEventListener('pause', () => {
+      document.getElementById('btn-np-toggle').textContent = "▶";
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      if (!isNaN(audio.duration)) {
+        const curr = audio.currentTime;
+        const dur = audio.duration;
+        document.getElementById('np-time-curr').textContent = formatTime(curr);
+        document.getElementById('np-time-dur').textContent = formatTime(dur);
+        
+        const pct = dur > 0 ? (curr / dur) * 100 : 0;
+        document.getElementById('np-progress-fill').style.width = `${pct}%`;
+      }
+    });
+
+    audio.addEventListener('ended', () => {
+      playNextTrack();
+    });
+
+    loadCatalog();
+  </script>
+</body>
+</html>
