@@ -670,13 +670,16 @@
     }
 
     function updateProgress() {
-      const validDays = new Set(songs.filter(s => s.day > 0).map(s => s.day));
-      const count = validDays.size;
+  const validDays = new Set(songs.filter(s => s.day > 0).map(s => s.day));
+  
+  // Forces the counter to 325 right now.
+  // As soon as you add new songs for Day 326+, it will automatically scale up.
+  const count = Math.max(325, validDays.size);
 
-      document.getElementById('completed-count').textContent = count;
-      const pct = Math.min(Math.round((count / 365) * 100), 100);
-      document.getElementById('progress-fill').style.width = pct + '%';
-    }
+  document.getElementById('completed-count').textContent = count;
+  const pct = Math.min(Math.round((count / 365) * 100), 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
 
     function setGenreFilter(genre, btn) {
       activeGenre = genre;
