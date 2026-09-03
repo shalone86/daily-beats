@@ -758,13 +758,13 @@
     }
 
     function updateProgress() {
-      const validDays = new Set(songs.filter(s => s.day > 0).map(s => s.day));
-      const count = Math.max(325, validDays.size);
+  const validDays = songs.filter(s => s.day > 0).map(s => s.day);
+  const highestDay = validDays.length > 0 ? Math.max(...validDays) : 0;
 
-      document.getElementById('completed-count').textContent = count;
-      const pct = Math.min(Math.round((count / 365) * 100), 100);
-      document.getElementById('progress-fill').style.width = pct + '%';
-    }
+  document.getElementById('completed-count').textContent = highestDay;
+  const pct = Math.min(Math.round((highestDay / 365) * 100), 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+}
 
     function setGenreFilter(genre, btn) {
       activeGenre = genre;
