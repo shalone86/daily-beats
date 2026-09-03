@@ -6,10 +6,10 @@
 
   <title>Shalone's Daily Beats — Public Domain Music Archive</title>
   <meta name="description" content="Shalone's beat vault and daily music challenge released under CC0 Public Domain for all creative works." />
-  <link rel="canonical" href="https://dailybeats.com/" />
+  <link rel="canonical" href="https://shalonely.com/" />
 
   <!-- Open Graph -->
-  <meta property="og:url" content="https://dailybeats.com/" />
+  <meta property="og:url" content="https://shalonely.com/" />
   <meta property="og:title" content="Shalone's Daily Beats — Public Domain Music Archive" />
   <meta property="og:description" content="Shalone's beat vault and daily music challenge released under CC0 Public Domain for all creative works." />
   <meta property="og:type" content="website" />
@@ -404,7 +404,7 @@
       transition: width 0.1s linear;
     }
 
-    /* CALENDAR MODAL */
+    /* MONTHLY CALENDAR MODAL */
     .modal {
       display: none;
       position: fixed;
@@ -419,7 +419,7 @@
     .modal-content {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      max-width: 700px;
+      max-width: 850px;
       max-height: 85vh;
       overflow-y: auto;
       width: 100%;
@@ -428,32 +428,60 @@
       text-align: center;
     }
     
-    .calendar-grid {
+    .calendar-container {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-      gap: 0.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.25rem;
       margin-top: 1.2rem;
+      text-align: left;
     }
 
-    .calendar-day-btn {
+    .month-block {
       background: #121214;
       border: 1px solid var(--border);
-      color: var(--muted);
-      padding: 0.6rem 0.2rem;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      transition: all 0.2s;
+      border-radius: 6px;
+      padding: 0.8rem;
     }
-    .calendar-day-btn.has-track {
-      border-color: var(--accent);
+
+    .month-title {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+
+    .days-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      font-size: 0.75rem;
+      text-align: center;
+    }
+
+    .day-cell {
+      padding: 6px 2px;
+      border-radius: 4px;
+      background: #1e1e1e;
+      color: var(--muted);
+    }
+    .day-cell.completed {
+      background: rgba(212, 175, 55, 0.2);
+      border: 1px solid var(--accent);
       color: var(--accent);
       font-weight: bold;
+      cursor: pointer;
     }
-    .calendar-day-btn.has-track:hover {
+    .day-cell.completed:hover {
       background: var(--accent);
       color: #000;
     }
+    .day-cell.skipped {
+      background: rgba(231, 76, 60, 0.15);
+      color: #e74c3c;
+      text-decoration: line-through;
+    }
+    .day-cell.out-of-range { opacity: 0.25; }
 
     .btn-modal-close {
       margin-top: 1.5rem;
@@ -478,14 +506,15 @@
     <a href="#track-list">Beats</a>
     <a href="#" onclick="toggleCalendarModal(true)">📅 Calendar</a>
     <a href="#" onclick="triggerShuffle(event)" style="color: var(--accent); font-weight: 600;">🔀 Shuffle</a>
+    <a href="mailto:hello@shalonely.com" style="color: var(--text);">✉️ Contact (hello@shalonely.com)</a>
     <a href="https://donate.stripe.com/bJe9ATgAFgOjaCq1TlcV200" target="_blank" rel="noopener" style="color: var(--accent);">✝ Support</a>
   </nav>
 
   <div class="container">
     <header>
-      <h1 class="site-title">Daily Beats</h1>
+      <h1 class="site-title">Shalone Cason's Daily Beats</h1>
       <p class="hero-mission">
-        Shalone Cason's beat vault & daily composition archive. Released under CC0 Public Domain for all creative works.
+        Shalone's beat vault & daily composition archive. Released under CC0 Public Domain for all creative works.
       </p>
     </header>
 
@@ -494,7 +523,7 @@
       <div class="progress-bar-bg">
         <div class="progress-fill" id="progress-fill"></div>
       </div>
-      <button class="btn-calendar" onclick="toggleCalendarModal(true)">📅 View Day Calendar</button>
+      <button class="btn-calendar" onclick="toggleCalendarModal(true)">📅 View Monthly Calendar</button>
     </div>
 
     <!-- GENRE CATEGORY BUTTONS -->
@@ -508,22 +537,12 @@
 
     <div class="controls-row">
       <input type="text" id="search-input" class="search-input" placeholder="🔍 Search track name, BPM, Key, Chords..." oninput="renderTracks()" />
-      <button class="sort-btn" onclick="setSort('day')">📅 Day (Newest)</button>
+      <button class="sort-btn" onclick="setSort('day')">📅 Day (Newest First)</button>
       <button class="sort-btn" onclick="setSort('title')">🔤 Title</button>
       <button class="sort-btn" onclick="triggerShuffle(event)" style="color: var(--accent);">🔀 Shuffle</button>
     </div>
 
     <div id="track-list" class="track-list"></div>
-
-    <footer>
-      <p>© Daily Beats · CC0 Public Domain · All freely given for AMDG</p>
-      <p style="margin-top: 0.5rem;">
-        <button class="btn-modal-trigger" onclick="toggleModal(true)">Physical Media & Sharing Permission</button>
-      </p>
-      <p style="margin-top: 0.5rem;">
-        <a href="mailto:hello@shalonely.com">Contact & Inquiries</a>
-      </p>
-    </footer>
   </div>
 
   <!-- FLOATING NOW PLAYING BAR -->
@@ -549,22 +568,13 @@
     </div>
   </div>
 
-  <!-- CALENDAR MODAL -->
+  <!-- MONTHLY CALENDAR MODAL -->
   <div class="modal" id="calendar-modal">
     <div class="modal-content">
       <h3 style="color: var(--accent); font-family: var(--font-heading);">Daily Challenge Calendar</h3>
-      <p style="font-size: 0.85rem; color: var(--muted); margin-top: 0.25rem;">Click any highlighted day to listen to that track</p>
-      <div class="calendar-grid" id="calendar-grid"></div>
+      <p style="font-size: 0.85rem; color: var(--muted); margin-top: 0.25rem;">October 11, 2025 – October 2026</p>
+      <div class="calendar-container" id="calendar-container"></div>
       <button class="btn-modal-close" onclick="toggleCalendarModal(false)">Close</button>
-    </div>
-  </div>
-
-  <!-- PERMISSION MODAL -->
-  <div class="modal" id="permission-modal">
-    <div class="modal-content">
-      <h3 style="color: var(--accent); margin-bottom: 1rem; font-family: var(--font-heading);">Explicit Permission Granted</h3>
-      <p>We encourage you to download our music and burn or press it onto CDs, cassette tapes, vinyl, or any physical media of your choice for personal listening and sharing. We give explicit permission for that purpose.</p>
-      <button class="btn-modal-close" onclick="toggleModal(false)">Close</button>
     </div>
   </div>
 
@@ -572,23 +582,38 @@
     const MEDIA_BASE = "https://daily.shalonely.com";
     const CATALOG_URL = `${MEDIA_BASE}/catalog.json`;
 
+    const START_DATE = new Date('2025-10-11');
+    const SKIPPED_DATES = new Set(['2025-10-15', '2025-10-16']);
+
+    const MONTHS = [
+      { year: 2025, month: 9, name: "October 2025" },
+      { year: 2025, month: 10, name: "November 2025" },
+      { year: 2025, month: 11, name: "December 2025" },
+      { year: 2026, month: 0, name: "January 2026" },
+      { year: 2026, month: 1, name: "February 2026" },
+      { year: 2026, month: 2, name: "March 2026" },
+      { year: 2026, month: 3, name: "April 2026" },
+      { year: 2026, month: 4, name: "May 2026" },
+      { year: 2026, month: 5, name: "June 2026" },
+      { year: 2026, month: 6, name: "July 2026" },
+      { year: 2026, month: 7, name: "August 2026" },
+      { year: 2026, month: 8, name: "September 2026" },
+      { year: 2026, month: 9, name: "October 2026" }
+    ];
+
     let songs = [];
     let currentShufflePool = [];
     let isShuffleActive = false;
     let currentTrackIndex = -1;
     let currentSort = 'day';
-    let sortAsc = false; // Newest first by default
+    let sortAsc = false; // Numeric descending (Newest first)
     let activeGenre = 'All';
 
     const audio = new Audio();
 
-    function toggleModal(show) {
-      document.getElementById('permission-modal').style.display = show ? 'flex' : 'none';
-    }
-
     function toggleCalendarModal(show) {
       document.getElementById('calendar-modal').style.display = show ? 'flex' : 'none';
-      if (show) renderCalendarGrid();
+      if (show) renderMonthlyCalendar();
     }
 
     function formatTime(seconds) {
@@ -596,6 +621,27 @@
       const m = Math.floor(seconds / 60);
       const s = Math.floor(seconds % 60);
       return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    function getDayNumberForDate(year, month, day) {
+      const target = new Date(year, month, day);
+      if (target < START_DATE) return null;
+
+      let dayCount = 0;
+      let cursor = new Date(START_DATE);
+
+      while (cursor <= target) {
+        const y = cursor.getFullYear();
+        const m = String(cursor.getMonth() + 1).padStart(2, '0');
+        const d = String(cursor.getDate()).padStart(2, '0');
+        const formatted = `${y}-${m}-${d}`;
+
+        if (!SKIPPED_DATES.has(formatted)) {
+          dayCount++;
+        }
+        cursor.setDate(cursor.getDate() + 1);
+      }
+      return dayCount;
     }
 
     async function loadCatalog() {
@@ -609,7 +655,7 @@
             album.tracks.forEach(t => {
               songs.push({
                 title: t.title,
-                day: t.day || 0,
+                day: parseInt(t.day, 10) || 0,
                 bpm: t.bpm || "",
                 key: t.key || "",
                 chords: t.chords || "",
@@ -669,13 +715,10 @@
       });
 
       filtered.sort((a, b) => {
-        let valA = a[currentSort] || 0;
-        let valB = b[currentSort] || 0;
-        
-        if (typeof valA === 'number' && typeof valB === 'number') {
-          return sortAsc ? valA - valB : valB - valA;
+        if (currentSort === 'day') {
+          return sortAsc ? a.day - b.day : b.day - a.day;
         }
-        return sortAsc ? String(valA).localeCompare(String(valB)) : String(valB).localeCompare(String(valA));
+        return sortAsc ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title);
       });
 
       filtered.forEach(song => {
@@ -716,29 +759,66 @@
       });
     }
 
-    function renderCalendarGrid() {
-      const gridEl = document.getElementById('calendar-grid');
-      gridEl.innerHTML = '';
+    function renderMonthlyCalendar() {
+      const container = document.getElementById('calendar-container');
+      container.innerHTML = '';
 
-      const maxDay = Math.max(365, ...songs.map(s => s.day));
       const dayMap = {};
       songs.forEach(s => { if (s.day > 0) dayMap[s.day] = s; });
 
-      for (let d = 1; d <= maxDay; d++) {
-        const btn = document.createElement('button');
-        btn.className = `calendar-day-btn ${dayMap[d] ? 'has-track' : ''}`;
-        btn.textContent = `D${d}`;
-        if (dayMap[d]) {
-          btn.onclick = () => {
-            toggleCalendarModal(false);
-            const idx = songs.indexOf(dayMap[d]);
-            playTrackByIndex(idx);
-            const targetEl = document.getElementById(`track-day-${d}`);
-            if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          };
+      MONTHS.forEach(({ year, month, name }) => {
+        const block = document.createElement('div');
+        block.className = 'month-block';
+
+        const title = document.createElement('div');
+        title.className = 'month-title';
+        title.textContent = name;
+        block.appendChild(title);
+
+        const grid = document.createElement('div');
+        grid.className = 'days-grid';
+
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+        for (let d = 1; d <= daysInMonth; d++) {
+          const mFormatted = String(month + 1).padStart(2, '0');
+          const dFormatted = String(d).padStart(2, '0');
+          const dateStr = `${year}-${mFormatted}-${dFormatted}`;
+
+          const dayCell = document.createElement('div');
+          dayCell.className = 'day-cell';
+
+          if (SKIPPED_DATES.has(dateStr)) {
+            dayCell.classList.add('skipped');
+            dayCell.textContent = `${d} ×`;
+            dayCell.title = "Missed Day";
+          } else {
+            const dayNum = getDayNumberForDate(year, month, d);
+            if (dayNum && dayMap[dayNum]) {
+              dayCell.classList.add('completed');
+              dayCell.textContent = d;
+              dayCell.title = `Day ${dayNum}: ${dayMap[dayNum].title}`;
+              dayCell.onclick = () => {
+                toggleCalendarModal(false);
+                const idx = songs.indexOf(dayMap[dayNum]);
+                playTrackByIndex(idx);
+                const targetEl = document.getElementById(`track-day-${dayNum}`);
+                if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              };
+            } else if (dayNum) {
+              dayCell.textContent = d;
+            } else {
+              dayCell.classList.add('out-of-range');
+              dayCell.textContent = d;
+            }
+          }
+
+          grid.appendChild(dayCell);
         }
-        gridEl.appendChild(btn);
-      }
+
+        block.appendChild(grid);
+        container.appendChild(block);
+      });
     }
 
     function playTrackByIndex(index) {
