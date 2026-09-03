@@ -503,10 +503,12 @@
 
   <!-- STICKY NAV -->
   <nav class="sticky-nav">
-    <a href="#track-list">Beats</a>
-    <a href="#" onclick="toggleCalendarModal(true)">📅 Calendar</a>
+    <a href="#" onclick="setGenreFilter('Lofi'); return false;">Lofi</a>
+    <a href="#" onclick="setGenreFilter('Hip-Hop'); return false;">Hip-Hop</a>
+    <a href="#" onclick="setGenreFilter('Pop'); return false;">Pop</a>
+    <a href="#" onclick="setGenreFilter('Electronic'); return false;">Electronic</a>
     <a href="#" onclick="triggerShuffle(event)" style="color: var(--accent); font-weight: 600;">🔀 Shuffle</a>
-    <a href="mailto:hello@shalonely.com" style="color: var(--text);">✉️ Contact (hello@shalonely.com)</a>
+    <a href="mailto:hello@shalonely.com" style="color: var(--text);">Contact</a>
     <a href="https://donate.stripe.com/bJe9ATgAFgOjaCq1TlcV200" target="_blank" rel="noopener" style="color: var(--accent);">✝ Support</a>
   </nav>
 
@@ -583,7 +585,13 @@
     const CATALOG_URL = `${MEDIA_BASE}/catalog.json`;
 
     const START_DATE = new Date('2025-10-11');
-    const SKIPPED_DATES = new Set(['2025-10-15', '2025-10-16']);
+    const SKIPPED_DATES = new Set([
+      '2025-10-11', '2025-10-12', '2025-10-13', '2025-10-14', '2025-10-17',
+      '2025-10-19', '2025-10-20', '2025-10-21', '2025-10-22', '2025-10-23', '2025-10-24', '2025-10-25', '2025-10-26', '2025-10-27', '2025-10-28', '2025-10-29', '2025-10-30', '2025-10-31',
+      '2025-11-01', '2025-11-02', '2025-11-03', '2025-11-04', '2025-11-05', '2025-11-07', '2025-11-08',
+      '2025-11-26', '2025-11-27', '2025-11-28', '2025-11-29', '2025-11-30',
+      '2026-02-23', '2026-04-23', '2026-06-21'
+    ]);
 
     const MONTHS = [
       { year: 2025, month: 9, name: "October 2025" },
@@ -606,7 +614,7 @@
     let isShuffleActive = false;
     let currentTrackIndex = -1;
     let currentSort = 'day';
-    let sortAsc = false; // Numeric descending (Newest first)
+    let sortAsc = false;
     let activeGenre = 'All';
 
     const audio = new Audio();
@@ -675,19 +683,24 @@
     }
 
     function updateProgress() {
-  // Count unique, valid Day numbers > 0
-  const validDays = new Set(songs.filter(s => s.day > 0).map(s => s.day));
-  const count = validDays.size;
+      const validDays = new Set(songs.filter(s => s.day > 0).map(s => s.day));
+      const count = validDays.size;
 
-  document.getElementById('completed-count').textContent = count;
-  const pct = Math.min(Math.round((count / 365) * 100), 100);
-  document.getElementById('progress-fill').style.width = pct + '%';
-}
+      document.getElementById('completed-count').textContent = count;
+      const pct = Math.min(Math.round((count / 365) * 100), 100);
+      document.getElementById('progress-fill').style.width = pct + '%';
+    }
 
     function setGenreFilter(genre, btn) {
       activeGenre = genre;
-      document.querySelectorAll('.btn-genre').forEach(b => b.classList.remove('active'));
-      if (btn) btn.classList.add('active');
+      document.querySelectorAll('.btn-genre').forEach(b => {
+        const btnText = b.textContent.trim().toLowerCase();
+        if (btnText === genre.toLowerCase() || (genre === 'All' && btnText.includes('all'))) {
+          b.classList.add('active');
+        } else {
+          b.classList.remove('active');
+        }
+      });
       renderTracks();
     }
 
@@ -736,6 +749,13 @@
         const keyHtml = song.key ? `<span class="meta-badge">🎼 Key: ${song.key}</span>` : '';
         const genreHtml = song.genre ? `<span class="meta-badge">🏷️ ${song.genre}</span>` : '';
 
+        // Strip chord string from description so it never renders twice
+        let cleanDesc = song.description || "";
+        if (song.chords) {
+          cleanDesc = cleanDesc.replace(/\bchords?:\s*[^\n|]+/gi, '').replace(/\|\s*\|/g, '|').trim();
+          cleanDesc = cleanDesc.replace(/^\||\|$/g, '').trim();
+        }
+
         card.innerHTML = `
           <div class="track-header">
             <div class="track-title-wrap">
@@ -749,7 +769,7 @@
             </div>
           </div>
           ${chordsHtml}
-          ${song.description ? `<div class="track-desc">${song.description}</div>` : ''}
+          ${cleanDesc ? `<div class="track-desc">${cleanDesc}</div>` : ''}
           <div class="track-actions">
             <button class="play-btn" onclick="playTrackByIndex(${globalIdx})">▶ Play</button>
             <button class="btn-download" 
