@@ -4,14 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Daily Beats — Public Domain Music Archive</title>
-  <meta name="description" content="Beat vault and daily music challenge released under CC0 Public Domain for all creative works." />
+  <title>Shalone's Daily Beats — Public Domain Music Archive</title>
+  <meta name="description" content="Shalone's beat vault and daily music challenge released under CC0 Public Domain for all creative works." />
   <link rel="canonical" href="https://dailybeats.com/" />
 
   <!-- Open Graph -->
   <meta property="og:url" content="https://dailybeats.com/" />
-  <meta property="og:title" content="Daily Beats — Public Domain Music Archive" />
-  <meta property="og:description" content="Beat vault and daily music challenge released under CC0 Public Domain for all creative works." />
+  <meta property="og:title" content="Shalone's Daily Beats — Public Domain Music Archive" />
+  <meta property="og:description" content="Shalone's beat vault and daily music challenge released under CC0 Public Domain for all creative works." />
   <meta property="og:type" content="website" />
 
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -112,7 +112,7 @@
     }
     .progress-title {
       font-family: var(--font-serif);
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       font-weight: 600;
       color: var(--text);
     }
@@ -129,6 +129,44 @@
       height: 100%; 
       width: 0%; 
       transition: width 0.4s ease; 
+    }
+
+    .btn-calendar {
+      margin-top: 1rem;
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 0.5rem 1.2rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    .btn-calendar:hover { background: var(--accent); color: #000; }
+
+    /* GENRE FILTER BUTTONS */
+    .genre-filter-group {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1.5rem;
+    }
+    .btn-genre {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.4rem 0.9rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    .btn-genre:hover, .btn-genre.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(212, 175, 55, 0.1);
     }
 
     /* CONTROLS & SEARCH */
@@ -177,27 +215,73 @@
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 1rem 1.25rem;
+      padding: 1.25rem;
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 1rem;
+      flex-direction: column;
+      gap: 0.8rem;
       transition: border-color 0.2s;
     }
     .track-card:hover { border-color: rgba(212, 175, 55, 0.4); }
-    .track-info { flex: 1 1 200px; }
+    
+    .track-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .track-title-wrap { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
+    .day-badge {
+      background: var(--accent);
+      color: #000;
+      font-weight: bold;
+      font-size: 0.75rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+    }
     .track-title { 
       font-family: var(--font-serif);
-      font-size: 1.2rem; 
+      font-size: 1.25rem; 
       font-weight: 600; 
       color: var(--text); 
     }
     
+    .track-meta-badges {
+      display: flex;
+      gap: 0.4rem;
+      flex-wrap: wrap;
+    }
+    .meta-badge {
+      font-size: 0.72rem;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+    }
+
+    /* HIGHLIGHTED CHORDS BOX */
+    .chords-box {
+      background: rgba(212, 175, 55, 0.08);
+      border-left: 3px solid var(--accent);
+      padding: 0.6rem 0.8rem;
+      border-radius: 0 4px 4px 0;
+      font-size: 0.88rem;
+      color: var(--accent);
+      font-family: monospace;
+    }
+
+    .track-desc {
+      font-size: 0.9rem;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
     .track-actions {
       display: flex;
       align-items: center;
       gap: 0.75rem;
+      margin-top: 0.2rem;
     }
 
     .play-btn {
@@ -320,35 +404,12 @@
       transition: width 0.1s linear;
     }
 
-    /* FOOTER & MODAL */
-    footer {
-      text-align: center;
-      border-top: 1px solid var(--border);
-      padding: 2rem 1rem;
-      margin-top: 4rem;
-      color: var(--muted);
-      font-size: 0.85rem;
-      font-family: var(--font-sans);
-    }
-    footer a { color: var(--muted); text-decoration: underline; }
-    footer a:hover { color: var(--accent); }
-
-    .btn-modal-trigger {
-      background: none;
-      border: none;
-      color: var(--accent);
-      text-decoration: underline;
-      cursor: pointer;
-      font-size: 0.85rem;
-      margin-top: 0.5rem;
-      font-family: var(--font-sans);
-    }
-
+    /* CALENDAR MODAL */
     .modal {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.85);
+      background: rgba(0, 0, 0, 0.88);
       align-items: center;
       justify-content: center;
       padding: 1rem;
@@ -358,12 +419,42 @@
     .modal-content {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      max-width: 500px;
+      max-width: 700px;
+      max-height: 85vh;
+      overflow-y: auto;
       width: 100%;
-      padding: 2rem;
+      padding: 1.5rem;
       border-radius: 8px;
       text-align: center;
     }
+    
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
+      gap: 0.5rem;
+      margin-top: 1.2rem;
+    }
+
+    .calendar-day-btn {
+      background: #121214;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.6rem 0.2rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .calendar-day-btn.has-track {
+      border-color: var(--accent);
+      color: var(--accent);
+      font-weight: bold;
+    }
+    .calendar-day-btn.has-track:hover {
+      background: var(--accent);
+      color: #000;
+    }
+
     .btn-modal-close {
       margin-top: 1.5rem;
       background: var(--card-bg);
@@ -385,15 +476,16 @@
   <!-- STICKY NAV -->
   <nav class="sticky-nav">
     <a href="#track-list">Beats</a>
+    <a href="#" onclick="toggleCalendarModal(true)">📅 Calendar</a>
     <a href="#" onclick="triggerShuffle(event)" style="color: var(--accent); font-weight: 600;">🔀 Shuffle</a>
-    <a href="https://donorbox.org/methodius" target="_blank" rel="noopener" style="color: var(--accent);">✝ Support</a>
+    <a href="https://donate.stripe.com/bJe9ATgAFgOjaCq1TlcV200" target="_blank" rel="noopener" style="color: var(--accent);">✝ Support</a>
   </nav>
 
   <div class="container">
     <header>
-      <h1 class="site-title">⁜ Daily Beats</h1>
+      <h1 class="site-title">Daily Beats</h1>
       <p class="hero-mission">
-        Beat vault & daily composition archive. Released under CC0 Public Domain for all creative works.
+        Shalone Cason's beat vault & daily composition archive. Released under CC0 Public Domain for all creative works.
       </p>
     </header>
 
@@ -402,11 +494,21 @@
       <div class="progress-bar-bg">
         <div class="progress-fill" id="progress-fill"></div>
       </div>
+      <button class="btn-calendar" onclick="toggleCalendarModal(true)">📅 View Day Calendar</button>
+    </div>
+
+    <!-- GENRE CATEGORY BUTTONS -->
+    <div class="genre-filter-group">
+      <button class="btn-genre active" onclick="setGenreFilter('All', this)">All Beats</button>
+      <button class="btn-genre" onclick="setGenreFilter('Lofi', this)">Lofi</button>
+      <button class="btn-genre" onclick="setGenreFilter('Hip-Hop', this)">Hip-Hop</button>
+      <button class="btn-genre" onclick="setGenreFilter('Pop', this)">Pop</button>
+      <button class="btn-genre" onclick="setGenreFilter('Electronic', this)">Electronic</button>
     </div>
 
     <div class="controls-row">
-      <input type="text" id="search-input" class="search-input" placeholder="🔍 Search tracks..." oninput="renderTracks()" />
-      <button class="sort-btn" onclick="setSort('trackNum')">🔢 Track #</button>
+      <input type="text" id="search-input" class="search-input" placeholder="🔍 Search track name, BPM, Key, Chords..." oninput="renderTracks()" />
+      <button class="sort-btn" onclick="setSort('day')">📅 Day (Newest)</button>
       <button class="sort-btn" onclick="setSort('title')">🔤 Title</button>
       <button class="sort-btn" onclick="triggerShuffle(event)" style="color: var(--accent);">🔀 Shuffle</button>
     </div>
@@ -419,7 +521,7 @@
         <button class="btn-modal-trigger" onclick="toggleModal(true)">Physical Media & Sharing Permission</button>
       </p>
       <p style="margin-top: 0.5rem;">
-        <a href="mailto:hello@dailybeats.com">Contact & Inquiries</a>
+        <a href="mailto:hello@shalonely.com">Contact & Inquiries</a>
       </p>
     </footer>
   </div>
@@ -447,6 +549,16 @@
     </div>
   </div>
 
+  <!-- CALENDAR MODAL -->
+  <div class="modal" id="calendar-modal">
+    <div class="modal-content">
+      <h3 style="color: var(--accent); font-family: var(--font-heading);">Daily Challenge Calendar</h3>
+      <p style="font-size: 0.85rem; color: var(--muted); margin-top: 0.25rem;">Click any highlighted day to listen to that track</p>
+      <div class="calendar-grid" id="calendar-grid"></div>
+      <button class="btn-modal-close" onclick="toggleCalendarModal(false)">Close</button>
+    </div>
+  </div>
+
   <!-- PERMISSION MODAL -->
   <div class="modal" id="permission-modal">
     <div class="modal-content">
@@ -464,13 +576,19 @@
     let currentShufflePool = [];
     let isShuffleActive = false;
     let currentTrackIndex = -1;
-    let currentSort = 'trackNum';
-    let sortAsc = true;
+    let currentSort = 'day';
+    let sortAsc = false; // Newest first by default
+    let activeGenre = 'All';
 
     const audio = new Audio();
 
     function toggleModal(show) {
       document.getElementById('permission-modal').style.display = show ? 'flex' : 'none';
+    }
+
+    function toggleCalendarModal(show) {
+      document.getElementById('calendar-modal').style.display = show ? 'flex' : 'none';
+      if (show) renderCalendarGrid();
     }
 
     function formatTime(seconds) {
@@ -491,7 +609,12 @@
             album.tracks.forEach(t => {
               songs.push({
                 title: t.title,
-                trackNum: t.trackNum || 999,
+                day: t.day || 0,
+                bpm: t.bpm || "",
+                key: t.key || "",
+                chords: t.chords || "",
+                genre: t.genre || "Lofi",
+                description: t.description || "",
                 url: `${MEDIA_BASE}/${encodeURI(t.path)}`
               });
             });
@@ -508,9 +631,15 @@
     function updateProgress() {
       const count = songs.length;
       document.getElementById('completed-count').textContent = count;
-      // Allow count to go above 365, while capping visual bar at 100%
       const pct = Math.min(Math.round((count / 365) * 100), 100);
       document.getElementById('progress-fill').style.width = pct + '%';
+    }
+
+    function setGenreFilter(genre, btn) {
+      activeGenre = genre;
+      document.querySelectorAll('.btn-genre').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderTracks();
     }
 
     function setSort(field) {
@@ -518,7 +647,7 @@
         sortAsc = !sortAsc;
       } else {
         currentSort = field;
-        sortAsc = true;
+        sortAsc = field === 'title' ? true : false;
       }
       renderTracks();
     }
@@ -528,11 +657,20 @@
       const listEl = document.getElementById('track-list');
       listEl.innerHTML = '';
 
-      let filtered = songs.filter(s => s.title.toLowerCase().includes(query));
+      let filtered = songs.filter(s => {
+        const matchesGenre = activeGenre === 'All' || s.genre.toLowerCase() === activeGenre.toLowerCase();
+        const matchesQuery = !query || 
+          s.title.toLowerCase().includes(query) ||
+          s.bpm.toLowerCase().includes(query) ||
+          s.key.toLowerCase().includes(query) ||
+          s.chords.toLowerCase().includes(query) ||
+          s.description.toLowerCase().includes(query);
+        return matchesGenre && matchesQuery;
+      });
 
       filtered.sort((a, b) => {
-        let valA = a[currentSort] || '';
-        let valB = b[currentSort] || '';
+        let valA = a[currentSort] || 0;
+        let valB = b[currentSort] || 0;
         
         if (typeof valA === 'number' && typeof valB === 'number') {
           return sortAsc ? valA - valB : valB - valA;
@@ -544,10 +682,28 @@
         const globalIdx = songs.indexOf(song);
         const card = document.createElement('div');
         card.className = 'track-card';
+        card.id = `track-day-${song.day}`;
+
+        const chordsHtml = song.chords ? `<div class="chords-box">🎼 Chords: ${song.chords}</div>` : '';
+        const dayHtml = song.day > 0 ? `<span class="day-badge">Day ${song.day}</span>` : '';
+        const bpmHtml = song.bpm ? `<span class="meta-badge">🥁 ${song.bpm} BPM</span>` : '';
+        const keyHtml = song.key ? `<span class="meta-badge">🎼 Key: ${song.key}</span>` : '';
+        const genreHtml = song.genre ? `<span class="meta-badge">🏷️ ${song.genre}</span>` : '';
+
         card.innerHTML = `
-          <div class="track-info">
-            <div class="track-title">${song.trackNum !== 999 ? song.trackNum + '. ' : ''}${song.title}</div>
+          <div class="track-header">
+            <div class="track-title-wrap">
+              ${dayHtml}
+              <div class="track-title">${song.title}</div>
+            </div>
+            <div class="track-meta-badges">
+              ${genreHtml}
+              ${bpmHtml}
+              ${keyHtml}
+            </div>
           </div>
+          ${chordsHtml}
+          ${song.description ? `<div class="track-desc">${song.description}</div>` : ''}
           <div class="track-actions">
             <button class="play-btn" onclick="playTrackByIndex(${globalIdx})">▶ Play</button>
             <button class="btn-download" 
@@ -560,13 +716,38 @@
       });
     }
 
+    function renderCalendarGrid() {
+      const gridEl = document.getElementById('calendar-grid');
+      gridEl.innerHTML = '';
+
+      const maxDay = Math.max(365, ...songs.map(s => s.day));
+      const dayMap = {};
+      songs.forEach(s => { if (s.day > 0) dayMap[s.day] = s; });
+
+      for (let d = 1; d <= maxDay; d++) {
+        const btn = document.createElement('button');
+        btn.className = `calendar-day-btn ${dayMap[d] ? 'has-track' : ''}`;
+        btn.textContent = `D${d}`;
+        if (dayMap[d]) {
+          btn.onclick = () => {
+            toggleCalendarModal(false);
+            const idx = songs.indexOf(dayMap[d]);
+            playTrackByIndex(idx);
+            const targetEl = document.getElementById(`track-day-${d}`);
+            if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          };
+        }
+        gridEl.appendChild(btn);
+      }
+    }
+
     function playTrackByIndex(index) {
       if (index < 0 || index >= songs.length) return;
       currentTrackIndex = index;
       const track = songs[currentTrackIndex];
 
       audio.src = track.url;
-      document.getElementById('np-title').textContent = track.title;
+      document.getElementById('np-title').textContent = `${track.day > 0 ? 'Day ' + track.day + ' - ' : ''}${track.title}`;
       document.getElementById('now-playing-bar').style.display = 'flex';
 
       audio.play();
@@ -652,7 +833,6 @@
       }
     }
 
-    // Audio Listeners
     audio.addEventListener('play', () => {
       document.getElementById('btn-np-toggle').textContent = "⏸";
     });
