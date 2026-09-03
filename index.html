@@ -585,13 +585,7 @@
     const CATALOG_URL = `${MEDIA_BASE}/catalog.json`;
 
     const START_DATE = new Date('2025-10-11');
-    const SKIPPED_DATES = new Set([
-      '2025-10-11', '2025-10-12', '2025-10-13', '2025-10-14', '2025-10-17',
-      '2025-10-19', '2025-10-20', '2025-10-21', '2025-10-22', '2025-10-23', '2025-10-24', '2025-10-25', '2025-10-26', '2025-10-27', '2025-10-28', '2025-10-29', '2025-10-30', '2025-10-31',
-      '2025-11-01', '2025-11-02', '2025-11-03', '2025-11-04', '2025-11-05', '2025-11-07', '2025-11-08',
-      '2025-11-26', '2025-11-27', '2025-11-28', '2025-11-29', '2025-11-30',
-      '2026-02-23', '2026-04-23', '2026-06-21'
-    ]);
+    const SKIPPED_DATES = new Set(['2025-10-15', '2025-10-16']);
 
     const MONTHS = [
       { year: 2025, month: 9, name: "October 2025" },
@@ -635,21 +629,14 @@
       const target = new Date(year, month, day);
       if (target < START_DATE) return null;
 
-      let dayCount = 0;
-      let cursor = new Date(START_DATE);
+      const mFormatted = String(month + 1).padStart(2, '0');
+      const dFormatted = String(day).padStart(2, '0');
+      const dateStr = `${year}-${mFormatted}-${dFormatted}`;
 
-      while (cursor <= target) {
-        const y = cursor.getFullYear();
-        const m = String(cursor.getMonth() + 1).padStart(2, '0');
-        const d = String(cursor.getDate()).padStart(2, '0');
-        const formatted = `${y}-${m}-${d}`;
+      if (SKIPPED_DATES.has(dateStr)) return null;
 
-        if (!SKIPPED_DATES.has(formatted)) {
-          dayCount++;
-        }
-        cursor.setDate(cursor.getDate() + 1);
-      }
-      return dayCount;
+      const diffDays = Math.floor((target - START_DATE) / (1000 * 60 * 60 * 24)) + 1;
+      return target > new Date('2025-10-16') ? diffDays - 2 : diffDays;
     }
 
     async function loadCatalog() {
@@ -749,7 +736,6 @@
         const keyHtml = song.key ? `<span class="meta-badge">🎼 Key: ${song.key}</span>` : '';
         const genreHtml = song.genre ? `<span class="meta-badge">🏷️ ${song.genre}</span>` : '';
 
-        // Strip chord string from description so it never renders twice
         let cleanDesc = song.description || "";
         if (song.chords) {
           cleanDesc = cleanDesc.replace(/\bchords?:\s*[^\n|]+/gi, '').replace(/\|\s*\|/g, '|').trim();
