@@ -271,6 +271,19 @@
       font-family: monospace;
     }
 
+    /* HIGHLIGHTED LYRICS BOX */
+    .lyrics-box {
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid #8ea2bc;
+      padding: 0.65rem 0.85rem;
+      border-radius: 0 4px 4px 0;
+      font-size: 0.95rem;
+      font-family: var(--font-serif);
+      font-style: italic;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
     .track-desc {
       font-size: 0.9rem;
       color: var(--muted);
@@ -654,6 +667,7 @@
                 bpm: t.bpm || "",
                 key: t.key || "",
                 chords: t.chords || "",
+                lyrics: t.lyrics || "",
                 genre: t.genre || "Lofi",
                 description: t.description || "",
                 url: `${MEDIA_BASE}/${encodeURI(t.path)}`
@@ -670,16 +684,13 @@
     }
 
     function updateProgress() {
-  const validDays = new Set(songs.filter(s => s.day > 0).map(s => s.day));
-  
-  // Forces the counter to 325 right now.
-  // As soon as you add new songs for Day 326+, it will automatically scale up.
-  const count = Math.max(325, validDays.size);
+      const validDays = new Set(songs.filter(s => s.day > 0).map(s => s.day));
+      const count = Math.max(325, validDays.size);
 
-  document.getElementById('completed-count').textContent = count;
-  const pct = Math.min(Math.round((count / 365) * 100), 100);
-  document.getElementById('progress-fill').style.width = pct + '%';
-}
+      document.getElementById('completed-count').textContent = count;
+      const pct = Math.min(Math.round((count / 365) * 100), 100);
+      document.getElementById('progress-fill').style.width = pct + '%';
+    }
 
     function setGenreFilter(genre, btn) {
       activeGenre = genre;
@@ -716,6 +727,7 @@
           s.bpm.toLowerCase().includes(query) ||
           s.key.toLowerCase().includes(query) ||
           s.chords.toLowerCase().includes(query) ||
+          s.lyrics.toLowerCase().includes(query) ||
           s.description.toLowerCase().includes(query);
         return matchesGenre && matchesQuery;
       });
@@ -734,6 +746,7 @@
         card.id = `track-day-${song.day}`;
 
         const chordsHtml = song.chords ? `<div class="chords-box">🎼 Chords: ${song.chords}</div>` : '';
+        const lyricsHtml = song.lyrics ? `<div class="lyrics-box">📜 <em>Lyrics:</em> ${song.lyrics}</div>` : '';
         const dayHtml = song.day > 0 ? `<span class="day-badge">Day ${song.day}</span>` : '';
         const bpmHtml = song.bpm ? `<span class="meta-badge">🥁 ${song.bpm} BPM</span>` : '';
         const keyHtml = song.key ? `<span class="meta-badge">🎼 Key: ${song.key}</span>` : '';
@@ -742,8 +755,11 @@
         let cleanDesc = song.description || "";
         if (song.chords) {
           cleanDesc = cleanDesc.replace(/\bchords?:\s*[^\n|]+/gi, '').replace(/\|\s*\|/g, '|').trim();
-          cleanDesc = cleanDesc.replace(/^\||\|$/g, '').trim();
         }
+        if (song.lyrics) {
+          cleanDesc = cleanDesc.replace(/\blyrics?:\s*(.*?)(?=\b(?:bpm|key|chords):|$)/gi, '').trim();
+        }
+        cleanDesc = cleanDesc.replace(/^\||\|$/g, '').trim();
 
         card.innerHTML = `
           <div class="track-header">
@@ -758,6 +774,7 @@
             </div>
           </div>
           ${chordsHtml}
+          ${lyricsHtml}
           ${cleanDesc ? `<div class="track-desc">${cleanDesc}</div>` : ''}
           <div class="track-actions">
             <button class="play-btn" onclick="playTrackByIndex(${globalIdx})">▶ Play</button>
