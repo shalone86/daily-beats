@@ -41,13 +41,13 @@
       background-color: var(--bg);
       color: var(--text);
       line-height: 1.6;
-      padding-bottom: 6rem;
+      padding-bottom: 7rem;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    /* STICKY NAV (DECLUTTERED, NO EMOJIS) */
+    /* STICKY NAV (NO EMOJIS) */
     .sticky-nav {
       position: sticky;
       top: 0;
@@ -82,19 +82,19 @@
 
     /* HEADER & HERO */
     header {
-      padding: 2rem 0 1.25rem 0;
+      padding: 1.5rem 0 1rem 0;
       text-align: center;
     }
     .site-title { 
       font-family: var(--font-heading);
-      font-size: 1.5rem; 
+      font-size: 1.4rem; 
       color: var(--accent); 
-      margin-bottom: 0.5rem; 
+      margin-bottom: 0.4rem; 
       letter-spacing: 0.04em; 
     }
     @media (max-width: 600px) {
-      .site-title { font-size: 1.25rem; }
-      header { padding: 1.25rem 0 1rem 0; }
+      .site-title { font-size: 1.2rem; }
+      header { padding: 1rem 0 0.75rem 0; }
     }
 
     .hero-mission { 
@@ -103,7 +103,7 @@
       font-size: 1.1rem; 
       max-width: 720px; 
       margin: 0 auto 1.25rem auto; 
-      line-height: 1.6; 
+      line-height: 1.5; 
     }
 
     /* PROGRESS CARD */
@@ -111,8 +111,8 @@
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 8px;
-      padding: 1.25rem;
-      margin-bottom: 1.5rem;
+      padding: 1.1rem;
+      margin-bottom: 1.25rem;
       text-align: center;
     }
     .progress-title {
@@ -124,9 +124,9 @@
     .progress-bar-bg {
       background: rgba(212, 175, 55, 0.15);
       border-radius: 6px;
-      height: 16px;
+      height: 14px;
       overflow: hidden;
-      margin-top: 0.75rem;
+      margin-top: 0.6rem;
       border: 1px solid var(--border);
     }
     .progress-fill { 
@@ -137,54 +137,91 @@
     }
 
     .btn-calendar {
-      margin-top: 1rem;
+      margin-top: 0.85rem;
       background: transparent;
       border: 1px solid var(--accent);
       color: var(--accent);
-      padding: 0.5rem 1.2rem;
+      padding: 0.45rem 1.1rem;
       border-radius: 4px;
       cursor: pointer;
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       transition: all 0.2s;
     }
     .btn-calendar:hover { background: var(--accent); color: #000; }
 
-    /* CONTROLS & SEARCH */
-    .controls-row {
+    /* CONTROLS & FILTER PANEL ABOVE SEARCH BAR */
+    .control-panel {
       display: flex;
+      flex-direction: column;
       gap: 0.75rem;
-      flex-wrap: wrap;
       margin-bottom: 1.5rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+    }
+
+    .btn-group-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
       align-items: center;
     }
-    .search-input {
-      flex: 1 1 200px;
-      padding: 0.75rem 1rem;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text);
-      font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.2s;
-      font-family: var(--font-sans);
-    }
-    .search-input:focus { border-color: var(--accent); }
-    .search-input::placeholder { color: var(--muted); }
 
-    .sort-btn {
-      background: var(--card-bg);
+    .group-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      min-width: 60px;
+    }
+
+    .btn-filter {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: 0.35rem 0.8rem;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+    }
+    .btn-filter:hover, .btn-filter.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(212, 175, 55, 0.1);
+    }
+
+    .btn-action {
+      background: var(--bg);
       border: 1px solid var(--border);
       color: var(--text);
-      padding: 0.75rem 1rem;
+      padding: 0.4rem 0.85rem;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-family: var(--font-sans);
       transition: all 0.2s;
     }
-    .sort-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-action:hover { border-color: var(--accent); color: var(--accent); }
+
+    .search-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.2s;
+      font-family: var(--font-sans);
+      margin-top: 0.25rem;
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .search-input::placeholder { color: var(--muted); }
 
     /* TRACK CARDS */
     .track-list {
@@ -200,7 +237,7 @@
       display: flex;
       flex-direction: column;
       gap: 0.8rem;
-      transition: border-color 0.2s;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
     .track-card:hover { border-color: rgba(212, 175, 55, 0.4); }
     
@@ -315,17 +352,18 @@
       background: rgba(27, 27, 30, 0.96);
       backdrop-filter: blur(12px);
       border-top: 1px solid var(--accent);
-      padding: 0.6rem 1.2rem;
+      padding: 0.6rem 1rem;
       display: flex;
       align-items: center;
       gap: 1rem;
       box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
       font-family: var(--font-sans);
     }
+
     .np-controls {
       display: flex;
       align-items: center;
-      gap: 0.4rem;
+      gap: 0.35rem;
     }
     .btn-np {
       background: transparent;
@@ -395,6 +433,28 @@
       background: var(--accent);
       width: 0%;
       transition: width 0.1s linear;
+    }
+
+    .np-side-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .btn-np-action {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 0.35rem 0.65rem;
+      font-size: 0.78rem;
+      border-radius: 4px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .btn-np-action:hover { border-color: var(--accent); color: var(--accent); }
+
+    @media (max-width: 640px) {
+      .np-side-actions .btn-np-action.download-label { display: none; }
     }
 
     /* MONTHLY CALENDAR MODAL */
@@ -518,17 +578,43 @@
       <button class="btn-calendar" onclick="toggleCalendarModal(true)">View Monthly Calendar</button>
     </div>
 
-    <div class="controls-row">
-      <input type="text" id="search-input" class="search-input" placeholder="Search title, BPM, Key, Chords..." oninput="renderTracks()" />
-      <button class="sort-btn" id="sort-day-btn" onclick="setSort('day')">Day ↑ (Newest)</button>
-      <button class="sort-btn" id="sort-title-btn" onclick="setSort('title')">Title</button>
-      <button class="sort-btn" onclick="triggerShuffle(event)" style="color: var(--accent);">Shuffle</button>
+    <!-- FILTER & ACTION CONTROLS PANEL ABOVE SEARCH -->
+    <div class="control-panel">
+      <!-- SORT & SHUFFLE ROW -->
+      <div class="btn-group-row">
+        <span class="group-label">Sort</span>
+        <button class="btn-action" id="sort-day-btn" onclick="setSort('day')">Day ↑ (Newest)</button>
+        <button class="btn-action" id="sort-title-btn" onclick="setSort('title')">Title</button>
+        <button class="btn-action" onclick="triggerShuffle(event)" style="color: var(--accent); font-weight: 600;">Shuffle</button>
+      </div>
+
+      <!-- GENRE ROW -->
+      <div class="btn-group-row">
+        <span class="group-label">Genre</span>
+        <button class="btn-filter active" onclick="setGenreFilter('All', this)">All</button>
+        <button class="btn-filter" onclick="setGenreFilter('Pop', this)">Pop</button>
+        <button class="btn-filter" onclick="setGenreFilter('Lofi', this)">Lofi</button>
+        <button class="btn-filter" onclick="setGenreFilter('Hip-Hop', this)">Hip-Hop</button>
+        <button class="btn-filter" onclick="setGenreFilter('Electronic', this)">Electronic</button>
+      </div>
+
+      <!-- TEMPO ROW -->
+      <div class="btn-group-row">
+        <span class="group-label">Tempo</span>
+        <button class="btn-filter active" onclick="setBpmFilter('All', this)">All</button>
+        <button class="btn-filter" onclick="setBpmFilter('Slow', this)">Slow</button>
+        <button class="btn-filter" onclick="setBpmFilter('Mid', this)">Mid</button>
+        <button class="btn-filter" onclick="setBpmFilter('Fast', this)">Fast</button>
+      </div>
+
+      <!-- SEARCH INPUT -->
+      <input type="text" id="search-input" class="search-input" placeholder="Search title, BPM, Key, Chords, Lyrics..." oninput="renderTracks()" />
     </div>
 
     <div id="track-list" class="track-list"></div>
   </div>
 
-  <!-- PERSISTENT MINI PLAYER -->
+  <!-- ALWAYS-VISIBLE PERSISTENT MINI PLAYER -->
   <div class="now-playing-bar" id="now-playing-bar">
     <div class="np-controls">
       <button class="btn-np" onclick="playPrevTrack()">⏮</button>
@@ -548,6 +634,11 @@
         </div>
         <span class="np-time" id="np-time-dur">00:00</span>
       </div>
+    </div>
+
+    <div class="np-side-actions">
+      <button class="btn-np-action" onclick="jumpToCurrentTrack()" title="Scroll to playing track">View Track</button>
+      <button class="btn-np-action download-label" onclick="downloadCurrentTrack()" title="Download MP3">↓ MP3</button>
     </div>
   </div>
 
@@ -589,6 +680,8 @@
     let currentTrackIndex = -1;
     let currentSort = 'day';
     let sortAsc = false;
+    let activeGenre = 'All';
+    let activeBpm = 'All';
 
     const audio = new Audio();
 
@@ -668,6 +761,22 @@
       document.getElementById('progress-fill').style.width = pct + '%';
     }
 
+    function setGenreFilter(genre, btn) {
+      activeGenre = genre;
+      const row = btn.parentElement;
+      row.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderTracks();
+    }
+
+    function setBpmFilter(bpmCat, btn) {
+      activeBpm = bpmCat;
+      const row = btn.parentElement;
+      row.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderTracks();
+    }
+
     function setSort(field) {
       if (currentSort === field) {
         sortAsc = !sortAsc;
@@ -676,7 +785,6 @@
         sortAsc = field === 'title' ? true : false;
       }
 
-      // Dynamic toggle label updates
       const dayBtn = document.getElementById('sort-day-btn');
       const titleBtn = document.getElementById('sort-title-btn');
 
@@ -697,8 +805,10 @@
       listEl.innerHTML = '';
 
       let filtered = songs.filter(s => {
-        if (!query) return true;
-        return (
+        const matchesGenre = activeGenre === 'All' || s.genre.toLowerCase() === activeGenre.toLowerCase();
+        const matchesBpm = activeBpm === 'All' || s.bpmCategory.toLowerCase() === activeBpm.toLowerCase();
+        
+        const matchesQuery = !query || (
           s.title.toLowerCase().includes(query) ||
           s.bpm.toLowerCase().includes(query) ||
           s.bpmCategory.toLowerCase().includes(query) ||
@@ -708,6 +818,8 @@
           s.genre.toLowerCase().includes(query) ||
           s.description.toLowerCase().includes(query)
         );
+
+        return matchesGenre && matchesBpm && matchesQuery;
       });
 
       filtered.sort((a, b) => {
@@ -747,11 +859,11 @@
           ${lyricsHtml}
           ${song.description ? `<div class="track-desc">${song.description}</div>` : ''}
           <div class="track-actions">
-            <button class="play-btn" onclick="playTrackByIndex(${globalIdx})">Play</button>
+            <button class="play-btn" onclick="playTrackByIndex(${globalIdx})">▶ Play</button>
             <button class="btn-download" 
                     data-url="${song.url}" 
                     data-filename="${song.title}.mp3" 
-                    onclick="triggerDirectDownload(event)">MP3</button>
+                    onclick="triggerDirectDownload(event)">↓ MP3</button>
           </div>
         `;
         listEl.appendChild(card);
@@ -801,8 +913,7 @@
                 toggleCalendarModal(false);
                 const idx = songs.indexOf(dayMap[dayNum]);
                 playTrackByIndex(idx);
-                const targetEl = document.getElementById(`track-day-${dayNum}`);
-                if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                jumpToTrackByDay(dayNum);
               };
             } else if (dayNum) {
               dayCell.textContent = d;
@@ -828,6 +939,40 @@
       audio.src = track.url;
       document.getElementById('np-title').textContent = `${track.day > 0 ? 'Day ' + track.day + ' - ' : ''}${track.title}`;
       audio.play();
+    }
+
+    function jumpToTrackByDay(dayNum) {
+      const targetEl = document.getElementById(`track-day-${dayNum}`);
+      if (targetEl) {
+        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        targetEl.style.borderColor = 'var(--accent)';
+        targetEl.style.boxShadow = '0 0 15px rgba(212, 175, 55, 0.3)';
+        setTimeout(() => {
+          targetEl.style.borderColor = '';
+          targetEl.style.boxShadow = '';
+        }, 2200);
+      }
+    }
+
+    function jumpToCurrentTrack() {
+      if (currentTrackIndex === -1) return;
+      const track = songs[currentTrackIndex];
+      if (track && track.day > 0) {
+        jumpToTrackByDay(track.day);
+      }
+    }
+
+    function downloadCurrentTrack() {
+      if (currentTrackIndex === -1) return;
+      const track = songs[currentTrackIndex];
+      if (!track) return;
+
+      const link = document.createElement('a');
+      link.href = track.url;
+      link.download = `${track.title}.mp3`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     }
 
     function triggerShuffle(e) {
