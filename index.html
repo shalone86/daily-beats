@@ -271,15 +271,14 @@
       font-family: monospace;
     }
 
-    /* HIGHLIGHTED LYRICS BOX */
+    /* HIGHLIGHTED LYRICS BOX (SANS-SERIF) */
     .lyrics-box {
       background: rgba(255, 255, 255, 0.03);
       border-left: 3px solid #8ea2bc;
       padding: 0.65rem 0.85rem;
       border-radius: 0 4px 4px 0;
-      font-size: 0.95rem;
-      font-family: var(--font-serif);
-      font-style: italic;
+      font-size: 0.88rem;
+      font-family: var(--font-sans);
       color: var(--text);
       line-height: 1.5;
     }
@@ -715,6 +714,15 @@
       renderTracks();
     }
 
+    function cleanFrontendNoise(text) {
+      if (!text) return "";
+      return text
+        .replace(/\b[0-9A-Fa-f]{6,32}\b/g, '')
+        .replace(/\s+/g, ' ')
+        .replace(/^[\s|]+|[\s|]+$/g, '')
+        .trim();
+    }
+
     function renderTracks() {
       const query = document.getElementById('search-input').value.toLowerCase().trim();
       const listEl = document.getElementById('track-list');
@@ -746,7 +754,7 @@
         card.id = `track-day-${song.day}`;
 
         const chordsHtml = song.chords ? `<div class="chords-box">🎼 Chords: ${song.chords}</div>` : '';
-        const lyricsHtml = song.lyrics ? `<div class="lyrics-box">📜 <em>Lyrics:</em> ${song.lyrics}</div>` : '';
+        const lyricsHtml = song.lyrics ? `<div class="lyrics-box">📜 <strong>Lyrics:</strong> ${song.lyrics}</div>` : '';
         const dayHtml = song.day > 0 ? `<span class="day-badge">Day ${song.day}</span>` : '';
         const bpmHtml = song.bpm ? `<span class="meta-badge">🥁 ${song.bpm} BPM</span>` : '';
         const keyHtml = song.key ? `<span class="meta-badge">🎼 Key: ${song.key}</span>` : '';
@@ -759,7 +767,7 @@
         if (song.lyrics) {
           cleanDesc = cleanDesc.replace(/\blyrics?:\s*(.*?)(?=\b(?:bpm|key|chords):|$)/gi, '').trim();
         }
-        cleanDesc = cleanDesc.replace(/^\||\|$/g, '').trim();
+        cleanDesc = cleanFrontendNoise(cleanDesc);
 
         card.innerHTML = `
           <div class="track-header">
