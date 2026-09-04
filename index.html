@@ -724,38 +724,48 @@
     }
 
     async function loadCatalog() {
-      try {
-        const res = await fetch(CATALOG_URL);
-        const catalogData = await res.json();
-        
-        songs = [];
+  try {
+    const res = await fetch(`${CATALOG_URL}?v=${Date.now()}`);
+    const catalogData = await res.json();
+    
+    songs = [];
+    let rawTracks = [];
+
+    if (Array.isArray(catalogData)) {
+      if (catalogData.length > 0 && catalogData[0].tracks) {
         catalogData.forEach(album => {
           if (album.tracks && album.tracks.length > 0) {
-            album.tracks.forEach(t => {
-              const bpmVal = t.bpm || "";
-              songs.push({
-                title: t.title,
-                day: parseInt(t.day, 10) || 0,
-                bpm: bpmVal,
-                bpmCategory: getBpmCategory(bpmVal),
-                key: t.key || "",
-                chords: t.chords || "",
-                lyrics: t.lyrics || "",
-                genre: t.genre || "",
-                description: t.description || "",
-                url: `${MEDIA_BASE}/${encodeURI(t.path)}`
-              });
-            });
+            rawTracks.push(...album.tracks);
           }
         });
-
-        updateProgress();
-        renderTracks();
-        handleDeepLink();
-      } catch (err) {
-        console.error("Error loading catalog:", err);
+      } else {
+        rawTracks = catalogData;
       }
     }
+
+    rawTracks.forEach(t => {
+      const bpmVal = t.bpm || "";
+      songs.push({
+        title: t.title,
+        day: parseInt(t.day, 10) || 0,
+        bpm: bpmVal,
+        bpmCategory: getBpmCategory(bpmVal),
+        key: t.key || "",
+        chords: t.chords || "",
+        lyrics: t.lyrics || "",
+        genre: t.genre || "",
+        description: t.description || t.desc || "",
+        url: t.path ? `${MEDIA_BASE}/${encodeURI(t.path)}` : `${MEDIA_BASE}/${encodeURI(t.file)}`
+      });
+    });
+
+    updateProgress();
+    renderTracks();
+    handleDeepLink();
+  } catch (err) {
+    console.error("Error loading catalog:", err);
+  }
+}
 
     function updateProgress() {
   const validDays = songs.filter(s => s.day > 0).map(s => s.day);
