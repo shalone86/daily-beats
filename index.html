@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
   <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<link rel="shortcut icon" href="/favicon.ico" />
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-<meta name="apple-mobile-web-app-title" content="Shalone's Beats" />
-<link rel="manifest" href="/site.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="Shalone's Beats" />
+  <link rel="manifest" href="/site.webmanifest" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -19,8 +19,6 @@
   <meta property="og:title" content="Shalone's Daily Beats — Public Domain Music Archive" />
   <meta property="og:description" content="Beat vault and daily music challenge released under CC0 Public Domain for all creative works." />
   <meta property="og:type" content="website" />
-
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
   <!-- Google Fonts for Liturgical / Classical Serif Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -51,6 +49,15 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
+    }
+
+    /* RESPONSIVE HELPERS */
+    .mobile-only { display: none !important; }
+    .desktop-only { display: inline !important; }
+
+    @media (max-width: 640px) {
+      .mobile-only { display: inline !important; }
+      .desktop-only { display: none !important; }
     }
 
     /* STICKY NAV */
@@ -97,6 +104,10 @@
       color: var(--accent); 
       margin-bottom: 0.4rem; 
       letter-spacing: 0.04em; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
     }
     @media (max-width: 600px) {
       .site-title { font-size: 1.2rem; }
@@ -156,7 +167,6 @@
     }
     .btn-calendar:hover { background: var(--accent); color: #000; }
 
-    /* CONTROLS & FILTER PANEL */
     .control-panel {
       display: flex;
       flex-direction: column;
@@ -229,7 +239,6 @@
     .search-input:focus { border-color: var(--accent); }
     .search-input::placeholder { color: var(--muted); }
 
-    /* TRACK CARDS */
     .track-list {
       display: flex;
       flex-direction: column;
@@ -292,6 +301,7 @@
       font-size: 0.88rem;
       color: var(--accent);
       font-family: monospace;
+      word-break: break-word;
     }
 
     .lyrics-box {
@@ -303,18 +313,21 @@
       font-family: var(--font-sans);
       color: var(--text);
       line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
 
     .track-desc {
       font-size: 0.9rem;
       color: var(--muted);
       line-height: 1.5;
+      word-break: break-word;
     }
 
     .track-actions {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.6rem;
       margin-top: 0.2rem;
     }
 
@@ -343,10 +356,12 @@
       cursor: pointer;
       font-family: var(--font-sans);
       transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
     .btn-download:hover, .btn-share:hover { border-color: var(--text); color: var(--text); }
 
-    /* ALWAYS-VISIBLE PERSISTENT MINI PLAYER */
     .now-playing-bar {
       position: fixed;
       bottom: 0;
@@ -368,6 +383,7 @@
       display: flex;
       align-items: center;
       gap: 0.35rem;
+      flex-shrink: 0;
     }
     .btn-np {
       background: transparent;
@@ -407,6 +423,7 @@
       flex-direction: column;
       gap: 0.2rem;
       overflow: hidden;
+      min-width: 0;
     }
     .np-meta-row {
       display: flex;
@@ -414,7 +431,7 @@
       gap: 0.5rem;
       overflow: hidden;
     }
-    .np-symbol { color: var(--accent); font-size: 1.1rem; }
+    .np-symbol { color: var(--accent); font-size: 1.1rem; flex-shrink: 0; }
     .np-title { font-weight: 600; font-size: 0.88rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
     .np-progress-row {
@@ -422,7 +439,7 @@
       align-items: center;
       gap: 0.6rem;
     }
-    .np-time { font-size: 0.72rem; color: var(--muted); font-family: monospace; min-width: 38px; }
+    .np-time { font-size: 0.72rem; color: var(--muted); font-family: monospace; min-width: 38px; flex-shrink: 0; }
     .np-progress-bg {
       flex: 1;
       height: 6px;
@@ -443,6 +460,7 @@
       display: flex;
       align-items: center;
       gap: 0.4rem;
+      flex-shrink: 0;
     }
     .btn-np-action {
       background: transparent;
@@ -454,15 +472,13 @@
       cursor: pointer;
       white-space: nowrap;
       transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-sans);
     }
     .btn-np-action:hover { border-color: var(--accent); color: var(--accent); }
 
-    @media (max-width: 640px) {
-      .np-side-actions .btn-text { display: none; }
-      .np-side-actions .btn-np-action { padding: 0.35rem 0.5rem; }
-    }
-
-    /* MONTHLY CALENDAR MODAL */
     .modal {
       display: none;
       position: fixed;
@@ -559,7 +575,6 @@
 </head>
 <body>
 
-  <!-- STICKY NAV -->
   <nav class="sticky-nav">
     <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">Home</a>
     <a href="#" onclick="triggerShuffle(event); return false;">Shuffle</a>
@@ -571,7 +586,7 @@
     <header>
       <h1 class="site-title">Shalone's Daily Beats</h1>
       <p class="hero-mission">
-        Beat vault & daily composition archive. Released under CC0 Public Domain for all creative works.
+        Beat vault & daily composition archive. Royalty Free and Public Domain.
       </p>
     </header>
 
@@ -583,7 +598,6 @@
       <button class="btn-calendar" onclick="toggleCalendarModal(true)">View Monthly Calendar</button>
     </div>
 
-    <!-- CONTROLS PANEL ABOVE SEARCH -->
     <div class="control-panel">
       <!-- SORT & SHUFFLE ROW -->
       <div class="btn-group-row">
@@ -619,7 +633,6 @@
     <div id="track-list" class="track-list"></div>
   </div>
 
-  <!-- PERSISTENT MINI PLAYER -->
   <div class="now-playing-bar" id="now-playing-bar">
     <div class="np-controls">
       <button class="btn-np" onclick="playPrevTrack()">⏮</button>
@@ -629,7 +642,7 @@
 
     <div class="np-center-info">
       <div class="np-meta-row">
-        <span class="np-symbol">⁜</span>
+        <span class="np-symbol">🎵</span>
         <span class="np-title" id="np-title">Tap Shuffle or Play to start</span>
       </div>
       <div class="np-progress-row">
@@ -643,8 +656,14 @@
 
     <div class="np-side-actions">
       <button class="btn-np-action" onclick="jumpToCurrentTrack()" title="Scroll to playing track">View Track</button>
-      <button class="btn-np-action" onclick="shareCurrentTrack()" title="Share track">🔗<span class="btn-text"> Share</span></button>
-      <button class="btn-np-action" onclick="downloadCurrentTrack()" title="Download MP3">↓<span class="btn-text"> MP3</span></button>
+      <button class="btn-np-action" onclick="downloadCurrentTrack()" title="Download MP3">
+        <span class="desktop-only">↓ MP3</span>
+        <span class="mobile-only">↓</span>
+      </button>
+      <button class="btn-np-action" onclick="shareCurrentTrack(this)" title="Share track">
+        <span class="desktop-only">🔗 Share</span>
+        <span class="mobile-only">🔗</span>
+      </button>
     </div>
   </div>
 
@@ -691,6 +710,97 @@
 
     const audio = new Audio();
 
+    /**
+     * STRICT BRACKET PARSER
+     * Extracts chords ONLY from square brackets [...]
+     * Extracts lyrics ONLY from curly braces {...}
+     * Anything outside [...] and {...} stays as regular description text (even if it contains words like 'Chords:' or 'Lyrics:')
+     */
+    function parseTrackText(rawText, explicitChords, explicitLyrics) {
+      let extractedChords = [];
+      let extractedLyrics = [];
+      let cleanText = (rawText || "").trim();
+
+      // Handle explicit JSON chords if provided cleanly from backend catalog
+      if (explicitChords) {
+        let ec = explicitChords.trim();
+        if (ec.includes(']')) {
+          const parts = ec.split(']');
+          const chordPart = parts[0].replace(/\[/g, '').replace(/^chords?:?\s*/i, '').trim();
+          const spillover = parts.slice(1).join(']').trim();
+          if (chordPart && !chordPart.toLowerCase().startsWith("from my fake book")) {
+            extractedChords.push(chordPart);
+          }
+          if (spillover && !cleanText.includes(spillover)) {
+            cleanText = cleanText ? `${cleanText} ${spillover}` : spillover;
+          }
+        } else {
+          ec = ec.replace(/^chords?:?\s*/i, '').trim();
+          if (ec && !ec.toLowerCase().startsWith("from my fake book") && !ec.toLowerCase().includes("only 2")) {
+            extractedChords.push(ec);
+          }
+        }
+      }
+
+      if (explicitLyrics) {
+        extractedLyrics.push(explicitLyrics.trim());
+      }
+
+      if (cleanText) {
+        // Extract lyrics strictly inside curly braces {...}
+        cleanText = cleanText.replace(/\{\s*(?:lyrics?:?\s*)?(.*?)\}/gis, (match, lyricContent) => {
+          if (lyricContent && lyricContent.trim()) {
+            extractedLyrics.push(lyricContent.trim());
+          }
+          return "";
+        });
+
+        // Extract chords strictly inside square brackets [...]
+        cleanText = cleanText.replace(/\[\s*(?:chords?:?\s*)?(.*?)\]/gis, (match, chordContent) => {
+          const trimmed = chordContent ? chordContent.trim() : "";
+          if (!trimmed) return "";
+          // Ignore genre/meta tags like [sung], [spoken], [tts], [human], [hybrid]
+          if (/^(sung|spoken|tts|human|hybrid|100% human)$/i.test(trimmed)) {
+            return "";
+          }
+          const cleaned = trimmed.replace(/^chords?:?\s*/i, '').trim();
+          if (cleaned) {
+            extractedChords.push(cleaned);
+          }
+          return "";
+        });
+
+        // Clean up leftover empty brackets and redundant whitespace
+        cleanText = cleanText
+          .replace(/\[\s*\]/g, '')
+          .replace(/\{\s*\}/g, '')
+          .replace(/\s+/g, ' ')
+          .trim();
+      }
+
+      // Deduplicate chords & lyrics
+      const uniqueChords = [];
+      extractedChords.forEach(c => {
+        const cleanC = c.replace(/^chords?:?\s*/i, '').trim();
+        if (cleanC && !uniqueChords.includes(cleanC)) {
+          uniqueChords.push(cleanC);
+        }
+      });
+
+      const uniqueLyrics = [];
+      extractedLyrics.forEach(l => {
+        if (l && !uniqueLyrics.includes(l)) {
+          uniqueLyrics.push(l);
+        }
+      });
+
+      return {
+        chords: uniqueChords.join(" | "),
+        lyrics: uniqueLyrics.join("\n"),
+        description: cleanText
+      };
+    }
+
     function getBpmCategory(bpmStr) {
       const val = parseInt(bpmStr, 10);
       if (isNaN(val) || val <= 0) return "";
@@ -726,57 +836,62 @@
     }
 
     async function loadCatalog() {
-  try {
-    const res = await fetch(`${CATALOG_URL}?v=${Date.now()}`);
-    const catalogData = await res.json();
-    
-    songs = [];
-    let rawTracks = [];
+      try {
+        const res = await fetch(`${CATALOG_URL}?v=${Date.now()}`);
+        const catalogData = await res.json();
+        
+        songs = [];
+        let rawTracks = [];
 
-    if (Array.isArray(catalogData)) {
-      if (catalogData.length > 0 && catalogData[0].tracks) {
-        catalogData.forEach(album => {
-          if (album.tracks && album.tracks.length > 0) {
-            rawTracks.push(...album.tracks);
+        if (Array.isArray(catalogData)) {
+          if (catalogData.length > 0 && catalogData[0].tracks) {
+            catalogData.forEach(album => {
+              if (album.tracks && album.tracks.length > 0) {
+                rawTracks.push(...album.tracks);
+              }
+            });
+          } else {
+            rawTracks = catalogData;
           }
+        }
+
+        rawTracks.forEach(t => {
+          const bpmVal = t.bpm || "";
+          const rawTextSource = t.description || t.desc || t.notes || t.text || "";
+
+          // Run strict text parser
+          const parsed = parseTrackText(rawTextSource, t.chords, t.lyrics);
+
+          songs.push({
+            title: t.title || "Untitled Beat",
+            day: parseInt(t.day, 10) || 0,
+            bpm: bpmVal,
+            bpmCategory: getBpmCategory(bpmVal),
+            key: t.key || "",
+            chords: parsed.chords,
+            lyrics: parsed.lyrics,
+            description: parsed.description,
+            genre: t.genre || "",
+            url: t.path ? `${MEDIA_BASE}/${encodeURI(t.path)}` : `${MEDIA_BASE}/${encodeURI(t.file)}`
+          });
         });
-      } else {
-        rawTracks = catalogData;
+
+        updateProgress();
+        renderTracks();
+        handleDeepLink();
+      } catch (err) {
+        console.error("Error loading catalog:", err);
       }
     }
 
-    rawTracks.forEach(t => {
-      const bpmVal = t.bpm || "";
-      songs.push({
-        title: t.title,
-        day: parseInt(t.day, 10) || 0,
-        bpm: bpmVal,
-        bpmCategory: getBpmCategory(bpmVal),
-        key: t.key || "",
-        chords: t.chords || "",
-        lyrics: t.lyrics || "",
-        genre: t.genre || "",
-        description: t.description || t.desc || "",
-        url: t.path ? `${MEDIA_BASE}/${encodeURI(t.path)}` : `${MEDIA_BASE}/${encodeURI(t.file)}`
-      });
-    });
-
-    updateProgress();
-    renderTracks();
-    handleDeepLink();
-  } catch (err) {
-    console.error("Error loading catalog:", err);
-  }
-}
-
     function updateProgress() {
-  const validDays = songs.filter(s => s.day > 0).map(s => s.day);
-  const highestDay = validDays.length > 0 ? Math.max(...validDays) : 0;
+      const validDays = songs.filter(s => s.day > 0).map(s => s.day);
+      const highestDay = validDays.length > 0 ? Math.max(...validDays) : 0;
 
-  document.getElementById('completed-count').textContent = highestDay;
-  const pct = Math.min(Math.round((highestDay / 365) * 100), 100);
-  document.getElementById('progress-fill').style.width = pct + '%';
-}
+      document.getElementById('completed-count').textContent = highestDay;
+      const pct = Math.min(Math.round((highestDay / 365) * 100), 100);
+      document.getElementById('progress-fill').style.width = pct + '%';
+    }
 
     function setGenreFilter(genre, btn) {
       activeGenre = genre;
@@ -852,8 +967,8 @@
         card.className = 'track-card';
         card.id = `track-day-${song.day}`;
 
-        const chordsHtml = song.chords ? `<div class="chords-box">Chords: ${song.chords}</div>` : '';
-        const lyricsHtml = song.lyrics ? `<div class="lyrics-box"><strong>Lyrics:</strong> ${song.lyrics}</div>` : '';
+        const chordsHtml = song.chords ? `<div class="chords-box"><strong>Chords:</strong> ${song.chords}</div>` : '';
+        const lyricsHtml = song.lyrics ? `<div class="lyrics-box"><strong>Lyrics:</strong>\n${song.lyrics}</div>` : '';
         const dayHtml = song.day > 0 ? `<span class="day-badge">Day ${song.day}</span>` : '';
         
         const bpmHtml = song.bpm ? `<span class="meta-badge">${song.bpmCategory ? song.bpmCategory + ' · ' : ''}${song.bpm} BPM</span>` : '';
@@ -880,22 +995,45 @@
             <button class="btn-download" 
                     data-url="${song.url}" 
                     data-filename="${song.title}.mp3" 
-                    onclick="triggerDirectDownload(event)">↓ MP3</button>
-            <button class="btn-share" onclick="shareTrackLink(${song.day}, this)">🔗 Share</button>
+                    onclick="triggerDirectDownload(event)"
+                    title="Download MP3">
+              <span class="desktop-only">↓ MP3</span>
+              <span class="mobile-only">↓</span>
+            </button>
+            <button class="btn-share" onclick="shareTrackLink(${song.day}, this)" title="Share direct link">
+              <span class="desktop-only">🔗 Share</span>
+              <span class="mobile-only">🔗</span>
+            </button>
           </div>
         `;
         listEl.appendChild(card);
       });
     }
 
-    /* DEEP LINKING & SHARING HANDLERS */
-    function shareCurrentTrack() {
+    function shareCurrentTrack(btn) {
       if (currentTrackIndex === -1) return;
       const track = songs[currentTrackIndex];
       if (!track || !track.day) return;
       const shareUrl = `${window.location.origin}${window.location.pathname}#day-${track.day}`;
       history.pushState(null, null, `#day-${track.day}`);
-      navigator.clipboard.writeText(shareUrl).catch(() => {
+
+      navigator.clipboard.writeText(shareUrl).then(() => {
+        if (btn) {
+          const desktopSpan = btn.querySelector('.desktop-only');
+          const mobileSpan = btn.querySelector('.mobile-only');
+
+          if (desktopSpan && mobileSpan) {
+            const origDesktop = desktopSpan.textContent;
+            const origMobile = mobileSpan.textContent;
+            desktopSpan.textContent = "Copied!";
+            mobileSpan.textContent = "✓";
+            setTimeout(() => { 
+              desktopSpan.textContent = origDesktop; 
+              mobileSpan.textContent = origMobile; 
+            }, 1800);
+          }
+        }
+      }).catch(() => {
         prompt("Copy direct track link:", shareUrl);
       });
     }
@@ -906,9 +1044,23 @@
       history.pushState(null, null, `#day-${dayNum}`);
       
       navigator.clipboard.writeText(shareUrl).then(() => {
-        const originalText = btn.textContent;
-        btn.textContent = "Copied!";
-        setTimeout(() => { btn.textContent = originalText; }, 1800);
+        const desktopSpan = btn.querySelector('.desktop-only');
+        const mobileSpan = btn.querySelector('.mobile-only');
+
+        if (desktopSpan && mobileSpan) {
+          const origDesktop = desktopSpan.textContent;
+          const origMobile = mobileSpan.textContent;
+          desktopSpan.textContent = "Copied!";
+          mobileSpan.textContent = "✓";
+          setTimeout(() => { 
+            desktopSpan.textContent = origDesktop; 
+            mobileSpan.textContent = origMobile; 
+          }, 1800);
+        } else {
+          const originalText = btn.textContent;
+          btn.textContent = "Copied!";
+          setTimeout(() => { btn.textContent = originalText; }, 1800);
+        }
       }).catch(() => {
         prompt("Copy direct track link:", shareUrl);
       });
@@ -1114,9 +1266,9 @@
       const btn = e.currentTarget;
       const url = btn.dataset.url;
       const filename = btn.dataset.filename;
-      const originalText = btn.textContent;
+      const originalHtml = btn.innerHTML;
 
-      btn.textContent = "...";
+      btn.innerHTML = `<span style="font-size:11px;">⏳</span>`;
 
       try {
         const response = await fetch(url);
@@ -1133,7 +1285,7 @@
       } catch (err) {
         window.open(url, '_blank');
       } finally {
-        btn.textContent = originalText;
+        btn.innerHTML = originalHtml;
       }
     }
 
