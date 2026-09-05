@@ -750,8 +750,8 @@
         <span class="mobile-only">↓</span>
       </button>
       <button class="btn-np-action" onclick="shareCurrentTrack(this)" title="Share track">
-        <span class="desktop-only">🔗 Share</span>
-        <span class="mobile-only">🔗</span>
+        <span class="desktop-only"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: text-bottom;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>Share</span>
+        <span class="mobile-only"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg></span>
       </button>
     </div>
   </div>
@@ -799,6 +799,13 @@
     let activeBpm = 'All';
 
     const audio = new Audio();
+
+    function slugify(text) {
+      return text.toString().toLowerCase().trim()
+        .replace(/\s+/g, '-')
+        .replace(/[^\w\-]+/g, '')
+        .replace(/\-\-+/g, '-');
+    }
 
     /**
      * CUSTOM PACK SELECTION LOGIC
@@ -1137,9 +1144,10 @@
 
       filtered.forEach(song => {
         const globalIdx = songs.indexOf(song);
+        const trackSlug = slugify(song.title);
         const card = document.createElement('div');
         card.className = 'track-card';
-        card.id = `track-day-${song.day}`;
+        card.id = `track-${trackSlug}`;
 
         // Checkbox State persistence
         const isSelected = selectedTracks.some(t => t.url === song.url);
@@ -1183,9 +1191,9 @@
               <span class="desktop-only">↓ MP3</span>
               <span class="mobile-only">↓</span>
             </button>
-            <button class="btn-share" onclick="shareTrackLink(${song.day}, this)" title="Share direct link">
-              <span class="desktop-only">🔗 Share</span>
-              <span class="mobile-only">🔗</span>
+            <button class="btn-share" onclick="shareTrackLink('${trackSlug}', this)" title="Share direct link">
+              <span class="desktop-only"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px; vertical-align: text-bottom;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>Share</span>
+              <span class="mobile-only"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg></span>
             </button>
           </div>
         `;
@@ -1196,9 +1204,11 @@
     function shareCurrentTrack(btn) {
       if (currentTrackIndex === -1) return;
       const track = songs[currentTrackIndex];
-      if (!track || !track.day) return;
-      const shareUrl = `${window.location.origin}${window.location.pathname}#day-${track.day}`;
-      history.pushState(null, null, `#day-${track.day}`);
+      if (!track) return;
+      
+      const trackSlug = slugify(track.title);
+      const shareUrl = `${window.location.origin}${window.location.pathname}#track-${trackSlug}`;
+      history.pushState(null, null, `#track-${trackSlug}`);
 
       navigator.clipboard.writeText(shareUrl).then(() => {
         if (btn) {
@@ -1206,13 +1216,13 @@
           const mobileSpan = btn.querySelector('.mobile-only');
 
           if (desktopSpan && mobileSpan) {
-            const origDesktop = desktopSpan.textContent;
-            const origMobile = mobileSpan.textContent;
+            const origDesktop = desktopSpan.innerHTML;
+            const origMobile = mobileSpan.innerHTML;
             desktopSpan.textContent = "Copied!";
             mobileSpan.textContent = "✓";
             setTimeout(() => { 
-              desktopSpan.textContent = origDesktop; 
-              mobileSpan.textContent = origMobile; 
+              desktopSpan.innerHTML = origDesktop; 
+              mobileSpan.innerHTML = origMobile; 
             }, 1800);
           }
         }
@@ -1221,28 +1231,28 @@
       });
     }
 
-    function shareTrackLink(dayNum, btn) {
-      if (!dayNum) return;
-      const shareUrl = `${window.location.origin}${window.location.pathname}#day-${dayNum}`;
-      history.pushState(null, null, `#day-${dayNum}`);
+    function shareTrackLink(trackSlug, btn) {
+      if (!trackSlug) return;
+      const shareUrl = `${window.location.origin}${window.location.pathname}#track-${trackSlug}`;
+      history.pushState(null, null, `#track-${trackSlug}`);
       
       navigator.clipboard.writeText(shareUrl).then(() => {
         const desktopSpan = btn.querySelector('.desktop-only');
         const mobileSpan = btn.querySelector('.mobile-only');
 
         if (desktopSpan && mobileSpan) {
-          const origDesktop = desktopSpan.textContent;
-          const origMobile = mobileSpan.textContent;
+          const origDesktop = desktopSpan.innerHTML;
+          const origMobile = mobileSpan.innerHTML;
           desktopSpan.textContent = "Copied!";
           mobileSpan.textContent = "✓";
           setTimeout(() => { 
-            desktopSpan.textContent = origDesktop; 
-            mobileSpan.textContent = origMobile; 
+            desktopSpan.innerHTML = origDesktop; 
+            mobileSpan.innerHTML = origMobile; 
           }, 1800);
         } else {
-          const originalText = btn.textContent;
+          const originalText = btn.innerHTML;
           btn.textContent = "Copied!";
-          setTimeout(() => { btn.textContent = originalText; }, 1800);
+          setTimeout(() => { btn.innerHTML = originalText; }, 1800);
         }
       }).catch(() => {
         prompt("Copy direct track link:", shareUrl);
@@ -1254,10 +1264,14 @@
       if (!hash) return;
 
       let targetId = hash.replace('#', '');
+      
+      // Backwards compatibility for old #day-XX links
       if (targetId.startsWith('day-')) {
+        const dayNum = parseInt(targetId.replace('day-', ''), 10);
+        const song = songs.find(s => s.day === dayNum);
+        if (song) targetId = `track-${slugify(song.title)}`;
+      } else if (!targetId.startsWith('track-') && isNaN(targetId)) {
         targetId = `track-${targetId}`;
-      } else if (!targetId.startsWith('track-day-') && !isNaN(targetId)) {
-        targetId = `track-day-${targetId}`;
       }
 
       const targetEl = document.getElementById(targetId);
@@ -1271,13 +1285,10 @@
             targetEl.style.boxShadow = '';
           }, 3000);
 
-          const dayMatch = targetId.match(/\d+/);
-          if (dayMatch) {
-            const dayNum = parseInt(dayMatch[0], 10);
-            const songIdx = songs.findIndex(s => s.day === dayNum);
-            if (songIdx !== -1 && currentTrackIndex !== songIdx) {
-              playTrackByIndex(songIdx);
-            }
+          // Find the song by matching the slug so we can auto-play it
+          const songIdx = songs.findIndex(s => `track-${slugify(s.title)}` === targetId);
+          if (songIdx !== -1 && currentTrackIndex !== songIdx) {
+            playTrackByIndex(songIdx);
           }
         }, 300);
       }
@@ -1351,14 +1362,14 @@
 
       audio.src = track.url;
       document.getElementById('np-title').textContent = `${track.day > 0 ? 'Day ' + track.day + ' - ' : ''}${track.title}`;
-      if (track.day > 0) {
-        history.replaceState(null, null, `#day-${track.day}`);
-      }
+      history.replaceState(null, null, `#track-${slugify(track.title)}`);
       audio.play();
     }
 
     function jumpToTrackByDay(dayNum) {
-      const targetEl = document.getElementById(`track-day-${dayNum}`);
+      const song = songs.find(s => s.day === dayNum);
+      if (!song) return;
+      const targetEl = document.getElementById(`track-${slugify(song.title)}`);
       if (targetEl) {
         targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
         targetEl.style.borderColor = 'var(--accent)';
