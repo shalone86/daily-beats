@@ -458,7 +458,8 @@
     .btn-np-action:hover { border-color: var(--accent); color: var(--accent); }
 
     @media (max-width: 640px) {
-      .np-side-actions .btn-np-action.download-label { display: none; }
+      .np-side-actions .btn-text { display: none; }
+      .np-side-actions .btn-np-action { padding: 0.35rem 0.5rem; }
     }
 
     /* MONTHLY CALENDAR MODAL */
@@ -642,7 +643,8 @@
 
     <div class="np-side-actions">
       <button class="btn-np-action" onclick="jumpToCurrentTrack()" title="Scroll to playing track">View Track</button>
-      <button class="btn-np-action download-label" onclick="downloadCurrentTrack()" title="Download MP3">↓ MP3</button>
+      <button class="btn-np-action" onclick="shareCurrentTrack()" title="Share track">🔗<span class="btn-text"> Share</span></button>
+      <button class="btn-np-action" onclick="downloadCurrentTrack()" title="Download MP3">↓<span class="btn-text"> MP3</span></button>
     </div>
   </div>
 
@@ -887,6 +889,17 @@
     }
 
     /* DEEP LINKING & SHARING HANDLERS */
+    function shareCurrentTrack() {
+      if (currentTrackIndex === -1) return;
+      const track = songs[currentTrackIndex];
+      if (!track || !track.day) return;
+      const shareUrl = `${window.location.origin}${window.location.pathname}#day-${track.day}`;
+      history.pushState(null, null, `#day-${track.day}`);
+      navigator.clipboard.writeText(shareUrl).catch(() => {
+        prompt("Copy direct track link:", shareUrl);
+      });
+    }
+
     function shareTrackLink(dayNum, btn) {
       if (!dayNum) return;
       const shareUrl = `${window.location.origin}${window.location.pathname}#day-${dayNum}`;
