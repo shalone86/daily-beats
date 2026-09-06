@@ -193,9 +193,8 @@
 
     .btn-group-row {
       display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      align-items: center;
+      align-items: flex-start;
+      gap: 0.75rem;
     }
 
     .group-label {
@@ -204,7 +203,15 @@
       font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      min-width: 60px;
+      min-width: 55px;
+      padding-top: 0.45rem;
+    }
+
+    .btn-group-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      flex: 1;
     }
 
     .btn-filter {
@@ -684,28 +691,34 @@
       <!-- SORT & SHUFFLE ROW -->
       <div class="btn-group-row">
         <span class="group-label">Sort</span>
-        <button class="btn-action" id="sort-day-btn" onclick="setSort('day')">Day ↑ (Newest)</button>
-        <button class="btn-action" id="sort-title-btn" onclick="setSort('title')">Title</button>
-        <button class="btn-action" onclick="triggerShuffle(event)" style="color: var(--accent); font-weight: 600;">Shuffle</button>
+        <div class="btn-group-actions">
+          <button class="btn-action" id="sort-day-btn" onclick="setSort('day')">Day ↑ (Newest)</button>
+          <button class="btn-action" id="sort-title-btn" onclick="setSort('title')">Title</button>
+          <button class="btn-action" onclick="triggerShuffle(event)" style="color: var(--accent); font-weight: 600;">Shuffle</button>
+        </div>
       </div>
 
       <!-- GENRE ROW -->
       <div class="btn-group-row">
         <span class="group-label">Genre</span>
-        <button class="btn-filter active" onclick="setGenreFilter('All', this)">All</button>
-        <button class="btn-filter" onclick="setGenreFilter('Pop', this)">Pop</button>
-        <button class="btn-filter" onclick="setGenreFilter('Lofi', this)">Lofi</button>
-        <button class="btn-filter" onclick="setGenreFilter('Hip-Hop', this)">Hip-Hop</button>
-        <button class="btn-filter" onclick="setGenreFilter('Electronic', this)">Electronic</button>
+        <div class="btn-group-actions">
+          <button class="btn-filter active" onclick="setGenreFilter('All', this)">All</button>
+          <button class="btn-filter" onclick="setGenreFilter('Pop', this)">Pop</button>
+          <button class="btn-filter" onclick="setGenreFilter('Lofi', this)">Lofi</button>
+          <button class="btn-filter" onclick="setGenreFilter('Hip-Hop', this)">Hip-Hop</button>
+          <button class="btn-filter" onclick="setGenreFilter('Electronic', this)">Electronic</button>
+        </div>
       </div>
 
       <!-- TEMPO ROW -->
       <div class="btn-group-row">
         <span class="group-label">Tempo</span>
-        <button class="btn-filter active" onclick="setBpmFilter('All', this)">All</button>
-        <button class="btn-filter" onclick="setBpmFilter('Slow', this)">Slow</button>
-        <button class="btn-filter" onclick="setBpmFilter('Mid', this)">Mid</button>
-        <button class="btn-filter" onclick="setBpmFilter('Fast', this)">Fast</button>
+        <div class="btn-group-actions">
+          <button class="btn-filter active" onclick="setBpmFilter('All', this)">All</button>
+          <button class="btn-filter" onclick="setBpmFilter('Slow', this)">Slow</button>
+          <button class="btn-filter" onclick="setBpmFilter('Mid', this)">Mid</button>
+          <button class="btn-filter" onclick="setBpmFilter('Fast', this)">Fast</button>
+        </div>
       </div>
 
       <!-- SEARCH INPUT -->
