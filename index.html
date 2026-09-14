@@ -325,6 +325,16 @@
       padding: 0.15rem 0.45rem;
       border-radius: 4px;
     }
+    .meta-badge-link {
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .meta-badge-link:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(224, 168, 104, 0.1);
+    }
 
     .chords-box {
       background: rgba(212, 175, 55, 0.08);
@@ -895,7 +905,7 @@
       <!-- GENRE ROW -->
       <div class="btn-group-row">
         <span class="group-label">Genre</span>
-        <div class="btn-group-actions">
+        <div class="btn-group-actions" id="genre-filter-row">
           <button class="btn-filter active" onclick="setGenreFilter('All', this)">All</button>
           <button class="btn-filter" onclick="setGenreFilter('Pop', this)">Pop</button>
           <button class="btn-filter" onclick="setGenreFilter('Lofi', this)">Lofi</button>
@@ -907,7 +917,7 @@
       <!-- TEMPO ROW -->
       <div class="btn-group-row">
         <span class="group-label">Tempo</span>
-        <div class="btn-group-actions">
+        <div class="btn-group-actions" id="tempo-filter-row">
           <button class="btn-filter active" onclick="setBpmFilter('All', this)">All</button>
           <button class="btn-filter" onclick="setBpmFilter('Slow', this)">Slow</button>
           <button class="btn-filter" onclick="setBpmFilter('Mid', this)">Mid</button>
@@ -1311,6 +1321,50 @@
       renderTracks();
     }
 
+    function resetGenreFilterUI() {
+      activeGenre = 'All';
+      const row = document.getElementById('genre-filter-row');
+      row.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+      row.querySelector('.btn-filter').classList.add('active');
+    }
+
+    function resetBpmFilterUI() {
+      activeBpm = 'All';
+      const row = document.getElementById('tempo-filter-row');
+      row.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+      row.querySelector('.btn-filter').classList.add('active');
+    }
+
+    // Clicking a tag on a track card jumps to a focused view of everything
+    // sharing that tag: resets the other filter dimensions so the result
+    // set means exactly "this tag," not "this tag AND whatever was already
+    // selected."
+    function filterByGenre(genre) {
+      resetBpmFilterUI();
+      document.getElementById('search-input').value = '';
+      const row = document.getElementById('genre-filter-row');
+      const btn = Array.from(row.querySelectorAll('.btn-filter')).find(b => b.textContent.trim() === genre);
+      setGenreFilter(genre, btn || row.querySelector('.btn-filter'));
+      document.querySelector('.control-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function filterByBpm(bpmCat) {
+      resetGenreFilterUI();
+      document.getElementById('search-input').value = '';
+      const row = document.getElementById('tempo-filter-row');
+      const btn = Array.from(row.querySelectorAll('.btn-filter')).find(b => b.textContent.trim() === bpmCat);
+      setBpmFilter(bpmCat, btn || row.querySelector('.btn-filter'));
+      document.querySelector('.control-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function filterByKey(key) {
+      resetGenreFilterUI();
+      resetBpmFilterUI();
+      document.getElementById('search-input').value = key;
+      renderTracks();
+      document.querySelector('.control-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
     function setSort(field) {
       if (currentSort === field) {
         sortAsc = !sortAsc;
@@ -1381,9 +1435,14 @@
         const dayHtml = song.day > 0 ? `<span class="day-badge">Day ${song.day}</span>` : '';
         const dateHtml = song.date ? `<span class="meta-badge">${formatBeatDate(song.date)}</span>` : '';
         
-        const bpmHtml = song.bpm ? `<span class="meta-badge">${song.bpmCategory ? song.bpmCategory + ' · ' : ''}${song.bpm} BPM</span>` : '';
-        const keyHtml = song.key ? `<span class="meta-badge">Key: ${song.key}</span>` : '';
-        const genreHtml = song.genre ? `<span class="meta-badge">${song.genre}</span>` : '';
+        const bpmLabel = `${song.bpmCategory ? song.bpmCategory + ' · ' : ''}${song.bpm} BPM`;
+        const bpmHtml = song.bpm
+          ? (song.bpmCategory
+              ? `<button class="meta-badge meta-badge-link" onclick="filterByBpm('${song.bpmCategory}')" title="Show all ${song.bpmCategory} tempo tracks">${bpmLabel}</button>`
+              : `<span class="meta-badge">${bpmLabel}</span>`)
+          : '';
+        const keyHtml = song.key ? `<button class="meta-badge meta-badge-link" onclick="filterByKey('${song.key}')" title="Show all tracks in ${song.key}">Key: ${song.key}</button>` : '';
+        const genreHtml = song.genre ? `<button class="meta-badge meta-badge-link" onclick="filterByGenre('${song.genre}')" title="Show all ${song.genre} tracks">${song.genre}</button>` : '';
 
         card.innerHTML = `
           <div class="track-header">
