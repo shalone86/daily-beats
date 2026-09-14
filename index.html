@@ -325,6 +325,16 @@
       padding: 0.15rem 0.45rem;
       border-radius: 4px;
     }
+    .meta-badge-link {
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .meta-badge-link:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(224, 168, 104, 0.1);
+    }
 
     .chords-box {
       background: rgba(212, 175, 55, 0.08);
@@ -525,6 +535,7 @@
     }
     .np-symbol { color: var(--accent); font-size: 1.1rem; flex-shrink: 0; }
     .np-title { font-weight: 600; font-size: 0.88rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .np-date { font-size: 0.72rem; color: var(--muted); }
 
     .np-progress-row {
       display: flex;
@@ -570,6 +581,194 @@
       font-family: var(--font-sans);
     }
     .btn-np-action:hover { border-color: var(--accent); color: var(--accent); }
+
+    .np-fullplayer-btn {
+      width: 34px;
+      padding: 0;
+    }
+    .np-fullplayer-btn svg {
+      transition: transform 0.2s;
+    }
+
+    .np-handle {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 18px;
+      cursor: pointer;
+    }
+    .np-handle::after {
+      content: "";
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 46px;
+      height: 5px;
+      border-radius: 3px;
+      background: var(--muted);
+      opacity: 0.6;
+    }
+
+    .np-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 450;
+    }
+    .np-backdrop.active {
+      display: block;
+    }
+
+    .np-close {
+      display: none;
+      position: absolute;
+      top: 0.85rem;
+      right: 0.85rem;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 1rem;
+      line-height: 1;
+      cursor: pointer;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    @media (max-width: 640px) {
+      .now-playing-bar {
+        position: relative;
+        padding: 0.9rem 0.8rem 0.5rem;
+        gap: 0.8rem;
+        justify-content: space-between;
+      }
+
+      /* Collapsed mobile bar: hide title/progress (too small to read/use),
+         leaving just transport controls + action buttons. Everything
+         comes back once the bar is expanded via the handle. */
+      .np-center-info {
+        display: none;
+      }
+
+      .np-handle {
+        display: block;
+      }
+
+      body {
+        padding-bottom: 5rem;
+      }
+
+      .now-playing-bar.expanded {
+        position: fixed;
+        top: auto;
+        height: auto;
+        max-height: 75vh;
+        z-index: 500;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        border-radius: 18px 18px 0 0;
+        border-top: 1px solid var(--accent);
+        padding: 2rem 1.5rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
+        gap: 1.5rem;
+        overflow-y: auto;
+        background: rgba(15, 15, 17, 0.98);
+        box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.6);
+      }
+
+      .now-playing-bar.expanded .np-handle {
+        top: 0.5rem;
+      }
+
+      .now-playing-bar.expanded .np-close {
+        display: flex;
+      }
+
+      .now-playing-bar.expanded .np-center-info {
+        display: flex;
+        order: 0;
+        gap: 1rem;
+      }
+
+      .now-playing-bar.expanded .np-meta-row {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.5rem;
+      }
+
+      .now-playing-bar.expanded .np-symbol {
+        font-size: 3.5rem;
+      }
+
+      .now-playing-bar.expanded .np-date {
+        text-align: center;
+        font-size: 0.95rem;
+      }
+
+      .now-playing-bar.expanded .np-title {
+        font-size: 1.3rem;
+        white-space: normal;
+        overflow: visible;
+        text-overflow: unset;
+      }
+
+      .now-playing-bar.expanded .np-progress-bg {
+        height: 8px;
+      }
+
+      .now-playing-bar.expanded .np-controls {
+        order: 1;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-top: 0.5rem;
+      }
+
+      .now-playing-bar.expanded .np-controls .btn-np {
+        width: 46px;
+        height: 46px;
+        font-size: 1.2rem;
+      }
+
+      .now-playing-bar.expanded .np-controls .btn-np-toggle {
+        width: 58px;
+        height: 58px;
+        font-size: 1.5rem;
+      }
+
+      .now-playing-bar.expanded .np-side-actions {
+        order: 2;
+        justify-content: center;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+      }
+
+      .now-playing-bar.expanded .np-side-actions .btn-np-action {
+        flex: 1;
+        justify-content: center;
+        padding: 0.75rem 0.5rem;
+        font-size: 0.85rem;
+      }
+
+      .now-playing-bar.expanded .btn-np-action .desktop-only {
+        display: inline !important;
+      }
+
+      .now-playing-bar.expanded .btn-np-action .mobile-only {
+        display: none !important;
+      }
+
+      .now-playing-bar.expanded .np-fullplayer-btn svg {
+        transform: rotate(180deg);
+      }
+    }
 
     .modal {
       display: none;
@@ -706,7 +905,7 @@
       <!-- GENRE ROW -->
       <div class="btn-group-row">
         <span class="group-label">Genre</span>
-        <div class="btn-group-actions">
+        <div class="btn-group-actions" id="genre-filter-row">
           <button class="btn-filter active" onclick="setGenreFilter('All', this)">All</button>
           <button class="btn-filter" onclick="setGenreFilter('Pop', this)">Pop</button>
           <button class="btn-filter" onclick="setGenreFilter('Lofi', this)">Lofi</button>
@@ -718,7 +917,7 @@
       <!-- TEMPO ROW -->
       <div class="btn-group-row">
         <span class="group-label">Tempo</span>
-        <div class="btn-group-actions">
+        <div class="btn-group-actions" id="tempo-filter-row">
           <button class="btn-filter active" onclick="setBpmFilter('All', this)">All</button>
           <button class="btn-filter" onclick="setBpmFilter('Slow', this)">Slow</button>
           <button class="btn-filter" onclick="setBpmFilter('Mid', this)">Mid</button>
@@ -742,7 +941,13 @@
     <button id="btn-download-zip" onclick="downloadCustomZip()">↓ Download ZIP</button>
   </div>
 
+  <div class="np-backdrop" id="np-backdrop" onclick="closeExpandedPlayer()"></div>
+
   <div class="now-playing-bar" id="now-playing-bar">
+    <div class="np-handle" onclick="toggleExpandedPlayer()" role="button" aria-label="Expand player" tabindex="0"></div>
+
+    <button class="np-close" onclick="closeExpandedPlayer()" aria-label="Close player">✕</button>
+
     <div class="np-controls">
       <button class="btn-np" onclick="playPrevTrack()">⏮</button>
       <button class="btn-np-toggle" id="btn-np-toggle" onclick="toggleNowPlaying()">▶</button>
@@ -754,6 +959,7 @@
         <span class="np-symbol">🎵</span>
         <span class="np-title" id="np-title">Tap Shuffle or Play to start</span>
       </div>
+      <span class="np-date" id="np-date"></span>
       <div class="np-progress-row">
         <span class="np-time" id="np-time-curr">00:00</span>
         <div class="np-progress-bg" id="np-progress-bg" onclick="seekAudio(event)">
@@ -764,6 +970,10 @@
     </div>
 
     <div class="np-side-actions">
+      <button class="btn-np-action np-fullplayer-btn mobile-only" onclick="toggleExpandedPlayer()" title="Full Player" aria-label="Open full player">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+      </button>
+
       <button class="btn-np-action" onclick="jumpToCurrentTrack()" title="Scroll to playing track">View Track</button>
       <button class="btn-np-action" onclick="downloadCurrentTrack()" title="Download MP3">
         <span class="desktop-only">↓ MP3</span>
@@ -1006,6 +1216,16 @@
       if (show) renderMonthlyCalendar();
     }
 
+    function toggleExpandedPlayer() {
+      document.getElementById('now-playing-bar').classList.toggle('expanded');
+      document.getElementById('np-backdrop').classList.toggle('active');
+    }
+
+    function closeExpandedPlayer() {
+      document.getElementById('now-playing-bar').classList.remove('expanded');
+      document.getElementById('np-backdrop').classList.remove('active');
+    }
+
     function formatTime(seconds) {
       if (isNaN(seconds) || seconds < 0) return "00:00";
       const m = Math.floor(seconds / 60);
@@ -1056,6 +1276,7 @@
           songs.push({
             title: t.title || "Untitled Beat",
             day: parseInt(t.day, 10) || 0,
+            date: t.date || "",
             bpm: bpmVal,
             bpmCategory: getBpmCategory(bpmVal),
             key: t.key || "",
@@ -1098,6 +1319,50 @@
       row.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       renderTracks();
+    }
+
+    function resetGenreFilterUI() {
+      activeGenre = 'All';
+      const row = document.getElementById('genre-filter-row');
+      row.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+      row.querySelector('.btn-filter').classList.add('active');
+    }
+
+    function resetBpmFilterUI() {
+      activeBpm = 'All';
+      const row = document.getElementById('tempo-filter-row');
+      row.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+      row.querySelector('.btn-filter').classList.add('active');
+    }
+
+    // Clicking a tag on a track card jumps to a focused view of everything
+    // sharing that tag: resets the other filter dimensions so the result
+    // set means exactly "this tag," not "this tag AND whatever was already
+    // selected."
+    function filterByGenre(genre) {
+      resetBpmFilterUI();
+      document.getElementById('search-input').value = '';
+      const row = document.getElementById('genre-filter-row');
+      const btn = Array.from(row.querySelectorAll('.btn-filter')).find(b => b.textContent.trim() === genre);
+      setGenreFilter(genre, btn || row.querySelector('.btn-filter'));
+      document.querySelector('.control-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function filterByBpm(bpmCat) {
+      resetGenreFilterUI();
+      document.getElementById('search-input').value = '';
+      const row = document.getElementById('tempo-filter-row');
+      const btn = Array.from(row.querySelectorAll('.btn-filter')).find(b => b.textContent.trim() === bpmCat);
+      setBpmFilter(bpmCat, btn || row.querySelector('.btn-filter'));
+      document.querySelector('.control-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function filterByKey(key) {
+      resetGenreFilterUI();
+      resetBpmFilterUI();
+      document.getElementById('search-input').value = key;
+      renderTracks();
+      document.querySelector('.control-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function setSort(field) {
@@ -1168,10 +1433,16 @@
         const chordsHtml = song.chords ? `<div class="chords-box"><strong>Chords:</strong> ${song.chords}</div>` : '';
         const lyricsHtml = song.lyrics ? `<div class="lyrics-box"><strong>Lyrics:</strong>\n${song.lyrics}</div>` : '';
         const dayHtml = song.day > 0 ? `<span class="day-badge">Day ${song.day}</span>` : '';
+        const dateHtml = song.date ? `<span class="meta-badge">${formatBeatDate(song.date)}</span>` : '';
         
-        const bpmHtml = song.bpm ? `<span class="meta-badge">${song.bpmCategory ? song.bpmCategory + ' · ' : ''}${song.bpm} BPM</span>` : '';
-        const keyHtml = song.key ? `<span class="meta-badge">Key: ${song.key}</span>` : '';
-        const genreHtml = song.genre ? `<span class="meta-badge">${song.genre}</span>` : '';
+        const bpmLabel = `${song.bpmCategory ? song.bpmCategory + ' · ' : ''}${song.bpm} BPM`;
+        const bpmHtml = song.bpm
+          ? (song.bpmCategory
+              ? `<button class="meta-badge meta-badge-link" onclick="filterByBpm('${song.bpmCategory}')" title="Show all ${song.bpmCategory} tempo tracks">${bpmLabel}</button>`
+              : `<span class="meta-badge">${bpmLabel}</span>`)
+          : '';
+        const keyHtml = song.key ? `<button class="meta-badge meta-badge-link" onclick="filterByKey('${song.key}')" title="Show all tracks in ${song.key}">Key: ${song.key}</button>` : '';
+        const genreHtml = song.genre ? `<button class="meta-badge meta-badge-link" onclick="filterByGenre('${song.genre}')" title="Show all ${song.genre} tracks">${song.genre}</button>` : '';
 
         card.innerHTML = `
           <div class="track-header">
@@ -1187,6 +1458,7 @@
               ${genreHtml}
               ${bpmHtml}
               ${keyHtml}
+              ${dateHtml}
             </div>
           </div>
           ${chordsHtml}
@@ -1364,6 +1636,15 @@
       });
     }
 
+    const MONTH_ABBR = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    function formatBeatDate(isoDateStr) {
+      if (!isoDateStr) return '';
+      const [y, m, d] = isoDateStr.split('-').map(Number);
+      if (!y || !m || !d) return '';
+      return `${MONTH_ABBR[m - 1]} ${d}, ${y}`;
+    }
+
     function playTrackByIndex(index) {
       if (index < 0 || index >= songs.length) return;
       currentTrackIndex = index;
@@ -1371,6 +1652,7 @@
 
       audio.src = track.url;
       document.getElementById('np-title').textContent = `${track.day > 0 ? 'Day ' + track.day + ' - ' : ''}${track.title}`;
+      document.getElementById('np-date').textContent = formatBeatDate(track.date);
       history.replaceState(null, null, `#track-${slugify(track.title)}`);
 
       if ('mediaSession' in navigator) {
@@ -1406,6 +1688,7 @@
 
     function jumpToCurrentTrack() {
       if (currentTrackIndex === -1) return;
+      closeExpandedPlayer();
       const track = songs[currentTrackIndex];
       if (track && track.day > 0) {
         jumpToTrackByDay(track.day);

@@ -41,6 +41,22 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(event.request.url);
 
+  // Network-first for the page shell itself (ensures deploys are visible
+  // immediately without waiting on stale-while-revalidate's extra reload),
+  // falling back to the cached copy only when offline.
+  if (event.request.mode === 'navigate' || url.pathname === '/' || url.pathname.endsWith('/index.html')) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          const clonedRes = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clonedRes));
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
   // Bypass cache for external media to prevent bloating local storage with MP3s
   if (url.hostname.includes('media.')) {
     return;
