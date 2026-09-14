@@ -865,7 +865,7 @@
 <body>
 
   <nav class="sticky-nav">
-    <a href="#" onclick="window.scrollTo({top: 0, behavior: 'smooth'}); return false;">Home</a>
+    <a href="#" onclick="goHome(); return false;">Home</a>
     <a href="#" onclick="triggerShuffle(event); return false;">Shuffle</a>
     <a href="mailto:hello@shalonely.com">Contact</a>
     <a href="https://donate.stripe.com/bJe9ATgAFgOjaCq1TlcV200" target="_blank" rel="noopener" style="color: var(--accent);">Support</a>
@@ -1559,6 +1559,15 @@
       }).catch(() => {
         prompt("Copy direct track link:", shareUrl);
       });
+    }
+
+    // Clears the #track-... hash a played/shared track leaves in the URL, so
+    // a refresh after pressing Home doesn't snap back to that track via
+    // handleDeepLink(). replaceState (not pushState) so it doesn't add a
+    // back-button entry.
+    function goHome() {
+      history.replaceState(null, null, window.location.pathname + window.location.search);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function handleDeepLink() {
