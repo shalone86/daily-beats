@@ -58,7 +58,7 @@ self.addEventListener('fetch', (event) => {
   }
 
   // Bypass cache for external media to prevent bloating local storage with MP3s
-  if (url.hostname.includes('media.')) {
+  if (url.hostname.includes('daily.shalonely.com') || url.pathname.endsWith('.mp3') || url.pathname.endsWith('.zip')) {
     return;
   }
 
