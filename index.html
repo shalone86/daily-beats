@@ -305,11 +305,6 @@
       padding: 0.15rem 0.5rem;
       border-radius: 4px;
     }
-    .track-date {
-      font-size: 0.78rem;
-      color: var(--muted);
-      font-family: var(--font-sans);
-    }
     .track-title { 
       font-family: var(--font-serif);
       font-size: 1.25rem; 
@@ -1384,7 +1379,7 @@
         const chordsHtml = song.chords ? `<div class="chords-box"><strong>Chords:</strong> ${song.chords}</div>` : '';
         const lyricsHtml = song.lyrics ? `<div class="lyrics-box"><strong>Lyrics:</strong>\n${song.lyrics}</div>` : '';
         const dayHtml = song.day > 0 ? `<span class="day-badge">Day ${song.day}</span>` : '';
-        const dateHtml = song.date ? `<span class="track-date">${formatBeatDate(song.date)}</span>` : '';
+        const dateHtml = song.date ? `<span class="meta-badge">${formatBeatDate(song.date)}</span>` : '';
         
         const bpmHtml = song.bpm ? `<span class="meta-badge">${song.bpmCategory ? song.bpmCategory + ' · ' : ''}${song.bpm} BPM</span>` : '';
         const keyHtml = song.key ? `<span class="meta-badge">Key: ${song.key}</span>` : '';
@@ -1398,13 +1393,13 @@
                      onchange="toggleTrackSelection(this)" 
                      ${checkedAttr} ${disabledAttr} />
               ${dayHtml}
-              ${dateHtml}
               <div class="track-title">${song.title}</div>
             </div>
             <div class="track-meta-badges">
               ${genreHtml}
               ${bpmHtml}
               ${keyHtml}
+              ${dateHtml}
             </div>
           </div>
           ${chordsHtml}
