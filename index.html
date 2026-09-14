@@ -305,6 +305,11 @@
       padding: 0.15rem 0.5rem;
       border-radius: 4px;
     }
+    .track-date {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-family: var(--font-sans);
+    }
     .track-title { 
       font-family: var(--font-serif);
       font-size: 1.25rem; 
@@ -525,6 +530,7 @@
     }
     .np-symbol { color: var(--accent); font-size: 1.1rem; flex-shrink: 0; }
     .np-title { font-weight: 600; font-size: 0.88rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .np-date { font-size: 0.72rem; color: var(--muted); }
 
     .np-progress-row {
       display: flex;
@@ -695,6 +701,11 @@
 
       .now-playing-bar.expanded .np-symbol {
         font-size: 3.5rem;
+      }
+
+      .now-playing-bar.expanded .np-date {
+        text-align: center;
+        font-size: 0.95rem;
       }
 
       .now-playing-bar.expanded .np-title {
@@ -943,6 +954,7 @@
         <span class="np-symbol">🎵</span>
         <span class="np-title" id="np-title">Tap Shuffle or Play to start</span>
       </div>
+      <span class="np-date" id="np-date"></span>
       <div class="np-progress-row">
         <span class="np-time" id="np-time-curr">00:00</span>
         <div class="np-progress-bg" id="np-progress-bg" onclick="seekAudio(event)">
@@ -1259,6 +1271,7 @@
           songs.push({
             title: t.title || "Untitled Beat",
             day: parseInt(t.day, 10) || 0,
+            date: t.date || "",
             bpm: bpmVal,
             bpmCategory: getBpmCategory(bpmVal),
             key: t.key || "",
@@ -1371,6 +1384,7 @@
         const chordsHtml = song.chords ? `<div class="chords-box"><strong>Chords:</strong> ${song.chords}</div>` : '';
         const lyricsHtml = song.lyrics ? `<div class="lyrics-box"><strong>Lyrics:</strong>\n${song.lyrics}</div>` : '';
         const dayHtml = song.day > 0 ? `<span class="day-badge">Day ${song.day}</span>` : '';
+        const dateHtml = song.date ? `<span class="track-date">${formatBeatDate(song.date)}</span>` : '';
         
         const bpmHtml = song.bpm ? `<span class="meta-badge">${song.bpmCategory ? song.bpmCategory + ' · ' : ''}${song.bpm} BPM</span>` : '';
         const keyHtml = song.key ? `<span class="meta-badge">Key: ${song.key}</span>` : '';
@@ -1384,6 +1398,7 @@
                      onchange="toggleTrackSelection(this)" 
                      ${checkedAttr} ${disabledAttr} />
               ${dayHtml}
+              ${dateHtml}
               <div class="track-title">${song.title}</div>
             </div>
             <div class="track-meta-badges">
@@ -1567,6 +1582,15 @@
       });
     }
 
+    const MONTH_ABBR = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    function formatBeatDate(isoDateStr) {
+      if (!isoDateStr) return '';
+      const [y, m, d] = isoDateStr.split('-').map(Number);
+      if (!y || !m || !d) return '';
+      return `${MONTH_ABBR[m - 1]} ${d}, ${y}`;
+    }
+
     function playTrackByIndex(index) {
       if (index < 0 || index >= songs.length) return;
       currentTrackIndex = index;
@@ -1574,6 +1598,7 @@
 
       audio.src = track.url;
       document.getElementById('np-title').textContent = `${track.day > 0 ? 'Day ' + track.day + ' - ' : ''}${track.title}`;
+      document.getElementById('np-date').textContent = formatBeatDate(track.date);
       history.replaceState(null, null, `#track-${slugify(track.title)}`);
 
       if ('mediaSession' in navigator) {
