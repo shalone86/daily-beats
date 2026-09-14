@@ -330,10 +330,14 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .meta-badge-link:hover {
+    .meta-badge-link:hover,
+    .meta-badge-link.active {
       border-color: var(--accent);
       color: var(--accent);
       background: rgba(224, 168, 104, 0.1);
+    }
+    .meta-badge-link.active {
+      font-weight: 600;
     }
 
     .chords-box {
@@ -533,7 +537,6 @@
       gap: 0.5rem;
       overflow: hidden;
     }
-    .np-symbol { color: var(--accent); font-size: 1.1rem; flex-shrink: 0; }
     .np-title { font-weight: 600; font-size: 0.88rem; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .np-date { font-size: 0.72rem; color: var(--muted); }
 
@@ -668,7 +671,7 @@
         position: fixed;
         top: auto;
         height: auto;
-        max-height: 75vh;
+        max-height: 50vh;
         z-index: 500;
         flex-direction: column;
         align-items: stretch;
@@ -701,10 +704,6 @@
         align-items: center;
         text-align: center;
         gap: 0.5rem;
-      }
-
-      .now-playing-bar.expanded .np-symbol {
-        font-size: 3.5rem;
       }
 
       .now-playing-bar.expanded .np-date {
@@ -955,7 +954,6 @@
 
     <div class="np-center-info">
       <div class="np-meta-row">
-        <span class="np-symbol">🎵</span>
         <span class="np-title" id="np-title">Tap Shuffle or Play to start</span>
       </div>
       <span class="np-date" id="np-date"></span>
@@ -1337,29 +1335,48 @@
     // Clicking a tag on a track card jumps to a focused view of everything
     // sharing that tag: resets the other filter dimensions so the result
     // set means exactly "this tag," not "this tag AND whatever was already
-    // selected."
+    // selected." Clicking the same tag again toggles the filter back off.
     function filterByGenre(genre) {
-      resetBpmFilterUI();
-      document.getElementById('search-input').value = '';
-      const row = document.getElementById('genre-filter-row');
-      const btn = Array.from(row.querySelectorAll('.btn-filter')).find(b => b.textContent.trim() === genre);
-      setGenreFilter(genre, btn || row.querySelector('.btn-filter'));
+      if (activeGenre === genre) {
+        resetGenreFilterUI();
+      } else {
+        resetBpmFilterUI();
+        document.getElementById('search-input').value = '';
+        activeGenre = genre;
+        const row = document.getElementById('genre-filter-row');
+        row.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+        const btn = Array.from(row.querySelectorAll('.btn-filter')).find(b => b.textContent.trim() === genre);
+        (btn || row.querySelector('.btn-filter')).classList.add('active');
+      }
+      renderTracks();
       document.querySelector('.control-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function filterByBpm(bpmCat) {
-      resetGenreFilterUI();
-      document.getElementById('search-input').value = '';
-      const row = document.getElementById('tempo-filter-row');
-      const btn = Array.from(row.querySelectorAll('.btn-filter')).find(b => b.textContent.trim() === bpmCat);
-      setBpmFilter(bpmCat, btn || row.querySelector('.btn-filter'));
+      if (activeBpm === bpmCat) {
+        resetBpmFilterUI();
+      } else {
+        resetGenreFilterUI();
+        document.getElementById('search-input').value = '';
+        activeBpm = bpmCat;
+        const row = document.getElementById('tempo-filter-row');
+        row.querySelectorAll('.btn-filter').forEach(b => b.classList.remove('active'));
+        const btn = Array.from(row.querySelectorAll('.btn-filter')).find(b => b.textContent.trim() === bpmCat);
+        (btn || row.querySelector('.btn-filter')).classList.add('active');
+      }
+      renderTracks();
       document.querySelector('.control-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function filterByKey(key) {
-      resetGenreFilterUI();
-      resetBpmFilterUI();
-      document.getElementById('search-input').value = key;
+      const input = document.getElementById('search-input');
+      if (input.value.trim().toLowerCase() === key.toLowerCase()) {
+        input.value = '';
+      } else {
+        resetGenreFilterUI();
+        resetBpmFilterUI();
+        input.value = key;
+      }
       renderTracks();
       document.querySelector('.control-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
@@ -1435,13 +1452,16 @@
         const dateHtml = song.date ? `<span class="meta-badge">${formatBeatDate(song.date)}</span>` : '';
         
         const bpmLabel = `${song.bpmCategory ? song.bpmCategory + ' · ' : ''}${song.bpm} BPM`;
+        const bpmActive = song.bpmCategory && activeBpm === song.bpmCategory;
         const bpmHtml = song.bpm
           ? (song.bpmCategory
-              ? `<button class="meta-badge meta-badge-link" onclick="filterByBpm('${song.bpmCategory}')" title="Show all ${song.bpmCategory} tempo tracks">${bpmLabel}</button>`
+              ? `<button class="meta-badge meta-badge-link${bpmActive ? ' active' : ''}" onclick="filterByBpm('${song.bpmCategory}')" title="Show all ${song.bpmCategory} tempo tracks">${bpmLabel}</button>`
               : `<span class="meta-badge">${bpmLabel}</span>`)
           : '';
-        const keyHtml = song.key ? `<button class="meta-badge meta-badge-link" onclick="filterByKey('${song.key}')" title="Show all tracks in ${song.key}">Key: ${song.key}</button>` : '';
-        const genreHtml = song.genre ? `<button class="meta-badge meta-badge-link" onclick="filterByGenre('${song.genre}')" title="Show all ${song.genre} tracks">${song.genre}</button>` : '';
+        const keyActive = song.key && query === song.key.toLowerCase();
+        const keyHtml = song.key ? `<button class="meta-badge meta-badge-link${keyActive ? ' active' : ''}" onclick="filterByKey('${song.key}')" title="Show all tracks in ${song.key}">Key: ${song.key}</button>` : '';
+        const genreActive = song.genre && activeGenre === song.genre;
+        const genreHtml = song.genre ? `<button class="meta-badge meta-badge-link${genreActive ? ' active' : ''}" onclick="filterByGenre('${song.genre}')" title="Show all ${song.genre} tracks">${song.genre}</button>` : '';
 
         card.innerHTML = `
           <div class="track-header">
