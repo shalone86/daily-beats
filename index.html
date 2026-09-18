@@ -151,6 +151,8 @@
       margin-bottom: 1.25rem;
       font-style: italic;
     }
+    .hero-tip a { color: var(--accent); font-weight: 600; text-decoration: underline; }
+    .hero-tip a:hover { color: var(--text); }
 
     /* PROGRESS CARD */
     .progress-card {
@@ -458,6 +460,8 @@
     .custom-pack-bar button:hover {
       background: #222;
     }
+    .pack-info { white-space: normal; }
+    .pack-warning { font-weight: 400; font-size: 0.78rem; opacity: 0.85; }
     .custom-pack-bar .btn-clear {
       background: transparent;
       color: #000;
@@ -959,7 +963,7 @@
       <p class="hero-mission">
         Beat vault & daily composition archive. Royalty Free and Public Domain.
       </p>
-      <p class="hero-tip">💡 Tip: Select checkboxes next to any track to build and download a custom 15-song ZIP.</p>
+      <p class="hero-tip">⬇ <a href="https://daily.shalonely.com/Daily_Beats_Complete_Archive.zip">Download Everything</a> — the full archive, updated daily. Warning: huge file (1GB+), may take a while.</p>
     </header>
 
     <div class="progress-card">
@@ -1014,7 +1018,8 @@
   <!-- CUSTOM PACK BAR -->
   <div class="custom-pack-bar" id="custom-pack-bar">
     <div class="pack-info">
-      📦 <span id="pack-count">0</span> / 15 Selected
+      📦 <span id="pack-count">0</span> Selected
+      <span id="pack-warning" class="pack-warning" hidden>— large packs take longer to zip and download</span>
     </div>
     <button class="btn-clear" onclick="clearPackSelections()">Clear</button>
     <button id="btn-download-zip" onclick="downloadCustomZip()">↓ Download ZIP</button>
@@ -1124,16 +1129,13 @@
         .replace(/\-\-+/g, '-');
     }
 
+    const PACK_WARN_THRESHOLD = 15;
+
     function toggleTrackSelection(checkbox) {
       const url = checkbox.dataset.url;
       const title = checkbox.dataset.title;
 
       if (checkbox.checked) {
-        if (selectedTracks.length >= 15) {
-          checkbox.checked = false;
-          alert("Maximum 15 songs per custom pack to ensure fast downloads.");
-          return;
-        }
         selectedTracks.push({ url, title });
       } else {
         selectedTracks = selectedTracks.filter(t => t.url !== url);
@@ -1144,8 +1146,8 @@
     function updatePackBar() {
       const bar = document.getElementById('custom-pack-bar');
       const countLabel = document.getElementById('pack-count');
-      const isMax = selectedTracks.length >= 15;
-      
+      const warningEl = document.getElementById('pack-warning');
+
       if (selectedTracks.length > 0) {
         bar.style.display = 'flex';
         countLabel.textContent = selectedTracks.length;
@@ -1153,11 +1155,7 @@
         bar.style.display = 'none';
       }
 
-      document.querySelectorAll('.track-checkbox').forEach(cb => {
-        if (!cb.checked) {
-          cb.disabled = isMax;
-        }
-      });
+      warningEl.hidden = selectedTracks.length <= PACK_WARN_THRESHOLD;
     }
 
     function clearPackSelections() {
@@ -1523,8 +1521,6 @@
         return sortAsc ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title);
       });
 
-      const isMax = selectedTracks.length >= 15;
-
       filtered.forEach(song => {
         const globalIdx = songs.indexOf(song);
         const trackSlug = slugify(song.title);
@@ -1533,7 +1529,6 @@
         card.id = `track-${trackSlug}`;
 
         const isSelected = selectedTracks.some(t => t.url === song.url);
-        const disabledAttr = (!isSelected && isMax) ? 'disabled' : '';
         const checkedAttr = isSelected ? 'checked' : '';
         const queuedClass = trackQueue.includes(globalIdx) ? ' queued' : '';
 
@@ -1557,10 +1552,10 @@
         card.innerHTML = `
           <div class="track-header">
             <div class="track-title-wrap">
-              <input type="checkbox" class="track-checkbox" 
-                     data-url="${song.url}" data-title="${song.title}" 
-                     onchange="toggleTrackSelection(this)" 
-                     ${checkedAttr} ${disabledAttr} />
+              <input type="checkbox" class="track-checkbox"
+                     data-url="${song.url}" data-title="${song.title}"
+                     onchange="toggleTrackSelection(this)"
+                     ${checkedAttr} />
               ${dayHtml}
               <div class="track-title">${song.title}</div>
             </div>
