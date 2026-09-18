@@ -404,7 +404,7 @@
     }
     .play-btn:hover { background: var(--accent-hover); }
 
-    .btn-download, .btn-share {
+    .btn-download, .btn-share, .btn-queue {
       background: transparent;
       border: 1px solid var(--border);
       color: var(--muted);
@@ -419,7 +419,8 @@
       align-items: center;
       justify-content: center;
     }
-    .btn-download:hover, .btn-share:hover { border-color: var(--text); color: var(--text); }
+    .btn-download:hover, .btn-share:hover, .btn-queue:hover { border-color: var(--text); color: var(--text); }
+    .btn-queue.queued { border-color: var(--accent); color: var(--accent); }
 
     /* CUSTOM PACK FLOATING BAR */
     .custom-pack-bar {
@@ -573,6 +574,74 @@
       width: 0%;
       transition: width 0.1s linear;
     }
+
+    .np-queue-indicator {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+    .np-queue-indicator .np-queue-clear {
+      background: transparent;
+      border: none;
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+    }
+    .np-queue-toggle {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 0.72rem;
+      font-family: var(--font-sans);
+      cursor: pointer;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .np-queue-chevron { font-size: 0.6rem; transition: transform 0.15s; }
+    .np-queue-indicator.open .np-queue-chevron { transform: rotate(180deg); }
+
+    .np-queue-list {
+      list-style: none;
+      margin: 0.3rem 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      max-height: 140px;
+      overflow-y: auto;
+      width: 100%;
+    }
+    .np-queue-list li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--text);
+    }
+    .np-queue-list .np-queue-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .np-queue-list .np-queue-remove {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 1rem;
+      line-height: 1;
+      padding: 0 0.2rem;
+      flex-shrink: 0;
+    }
+    .np-queue-list .np-queue-remove:hover { color: var(--text); }
 
     .np-side-actions {
       display: flex;
@@ -976,6 +1045,14 @@
         </div>
         <span class="np-time" id="np-time-dur">00:00</span>
       </div>
+      <div class="np-queue-indicator" id="np-queue-indicator" hidden>
+        <button class="np-queue-toggle" onclick="toggleQueuePanel()">
+          <span id="np-queue-count">Up next: 0 queued</span>
+          <span class="np-queue-chevron">▾</span>
+        </button>
+        <button class="np-queue-clear" onclick="clearQueue()">Clear</button>
+      </div>
+      <ul class="np-queue-list" id="np-queue-list" hidden></ul>
     </div>
 
     <div class="np-side-actions">
@@ -1032,6 +1109,7 @@
     let selectedTracks = [];
     let isShuffleActive = false;
     let currentTrackIndex = -1;
+    let trackQueue = [];
     let currentSort = 'day';
     let sortAsc = false;
     let activeGenre = 'All';
@@ -1457,6 +1535,7 @@
         const isSelected = selectedTracks.some(t => t.url === song.url);
         const disabledAttr = (!isSelected && isMax) ? 'disabled' : '';
         const checkedAttr = isSelected ? 'checked' : '';
+        const queuedClass = trackQueue.includes(globalIdx) ? ' queued' : '';
 
         const chordsHtml = song.chords ? `<div class="chords-box"><strong>Chords:</strong> ${song.chords}</div>` : '';
         const lyricsHtml = song.lyrics ? `<div class="lyrics-box"><strong>Lyrics:</strong>\n${song.lyrics}</div>` : '';
@@ -1497,7 +1576,11 @@
           ${song.description ? `<div class="track-desc">${song.description}</div>` : ''}
           <div class="track-actions">
             <button class="play-btn" onclick="playTrackByIndex(${globalIdx})">▶ Play</button>
-            <button class="btn-download" 
+            <button class="btn-queue${queuedClass}" onclick="toggleQueueTrack(${globalIdx})" title="Add to queue">
+              <span class="desktop-only">+ Queue</span>
+              <span class="mobile-only">+</span>
+            </button>
+            <button class="btn-download"
                     data-url="${song.url}" 
                     data-filename="${song.title}.mp3" 
                     onclick="triggerDirectDownload(event)"
@@ -1690,6 +1773,11 @@
       currentTrackIndex = index;
       const track = songs[currentTrackIndex];
 
+      // A track that starts playing is no longer "up next" -- drop it from
+      // the queue whether it got here via the queue itself or was played
+      // directly (e.g. its own Play button) while still queued.
+      if (trackQueue.includes(index)) toggleQueueTrack(index);
+
       audio.src = track.url;
       document.getElementById('np-title').textContent = `${track.day > 0 ? 'Day ' + track.day + ' - ' : ''}${track.title}`;
       document.getElementById('np-date').textContent = formatBeatDate(track.date);
@@ -1761,7 +1849,62 @@
       playTrackByIndex(randomIdx);
     }
 
+    function toggleQueueTrack(idx) {
+      const pos = trackQueue.indexOf(idx);
+      if (pos === -1) {
+        trackQueue.push(idx);
+      } else {
+        trackQueue.splice(pos, 1);
+      }
+      const btn = document.querySelector(`#track-${slugify(songs[idx].title)} .btn-queue`);
+      if (btn) btn.classList.toggle('queued', pos === -1);
+      updateQueueIndicator();
+    }
+
+    function updateQueueIndicator() {
+      const indicator = document.getElementById('np-queue-indicator');
+      const count = document.getElementById('np-queue-count');
+      const list = document.getElementById('np-queue-list');
+      if (!indicator || !count || !list) return;
+
+      indicator.hidden = trackQueue.length === 0;
+      count.textContent = `Up next: ${trackQueue.length} queued`;
+
+      list.innerHTML = trackQueue.map(idx => `
+        <li><span class="np-queue-title">${songs[idx].title}</span><button class="np-queue-remove" onclick="toggleQueueTrack(${idx})" title="Remove from queue">×</button></li>
+      `).join('');
+
+      if (trackQueue.length === 0) {
+        list.hidden = true;
+        indicator.classList.remove('open');
+      }
+    }
+
+    function toggleQueuePanel() {
+      const list = document.getElementById('np-queue-list');
+      const indicator = document.getElementById('np-queue-indicator');
+      if (!list) return;
+      list.hidden = !list.hidden;
+      indicator.classList.toggle('open', !list.hidden);
+    }
+
+    function clearQueue() {
+      trackQueue.forEach(idx => {
+        const btn = document.querySelector(`#track-${slugify(songs[idx].title)} .btn-queue`);
+        if (btn) btn.classList.remove('queued');
+      });
+      trackQueue = [];
+      updateQueueIndicator();
+    }
+
     function playNextTrack() {
+      if (trackQueue.length > 0) {
+        const nextIdx = trackQueue[0];
+        toggleQueueTrack(nextIdx);
+        playTrackByIndex(nextIdx);
+        return;
+      }
+
       if (songs.length === 0) return;
       if (isShuffleActive || currentTrackIndex === -1) {
         playRandomTrack();
