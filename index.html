@@ -596,21 +596,6 @@
       padding: 0;
       text-decoration: underline;
     }
-    .np-queue-toggle {
-      background: transparent;
-      border: none;
-      color: var(--muted);
-      font-size: 0.72rem;
-      font-family: var(--font-sans);
-      cursor: pointer;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-    .np-queue-chevron { font-size: 0.6rem; transition: transform 0.15s; }
-    .np-queue-indicator.open .np-queue-chevron { transform: rotate(180deg); }
-
     .np-queue-list {
       list-style: none;
       margin: 0.3rem 0 0;
@@ -1058,10 +1043,7 @@
         <span class="np-time" id="np-time-dur">00:00</span>
       </div>
       <div class="np-queue-indicator" id="np-queue-indicator" hidden>
-        <button class="np-queue-toggle" onclick="toggleQueuePanel()">
-          <span id="np-queue-count">Up next: 0 queued</span>
-          <span class="np-queue-chevron">▾</span>
-        </button>
+        <span id="np-queue-count">Up next: 0 queued</span>
         <button class="np-queue-clear" onclick="clearQueue()">Clear</button>
       </div>
       <ul class="np-queue-list" id="np-queue-list" hidden></ul>
@@ -1163,7 +1145,27 @@
       }
 
       warningEl.hidden = selectedTracks.length <= PACK_WARN_THRESHOLD;
+      updatePackBarPosition();
     }
+
+    // Keeps the custom-pack bar sitting just above the now-playing bar on
+    // desktop instead of a guessed fixed offset -- the player's height
+    // changes (queue shown/hidden, more tracks queued, etc.), and a static
+    // number has already been wrong twice. Mobile keeps its own CSS value
+    // (the player becomes a much taller full overlay there when expanded,
+    // which this isn't wired to track, and that layout is already fine).
+    function updatePackBarPosition() {
+      const packBar = document.getElementById('custom-pack-bar');
+      const npBar = document.getElementById('now-playing-bar');
+      if (!packBar || !npBar) return;
+      if (window.innerWidth <= 640) {
+        packBar.style.bottom = '';
+        return;
+      }
+      const npHeight = npBar.getBoundingClientRect().height;
+      packBar.style.bottom = `${npHeight + 16}px`;
+    }
+    window.addEventListener('resize', updatePackBarPosition);
 
     function clearPackSelections() {
       selectedTracks = [];
@@ -1799,6 +1801,7 @@
       }
 
       audio.play();
+      updatePackBarPosition();
     }
 
     function jumpToTrackByDay(dayNum) {
@@ -1869,25 +1872,16 @@
       const list = document.getElementById('np-queue-list');
       if (!indicator || !count || !list) return;
 
-      indicator.hidden = trackQueue.length === 0;
+      const hasQueue = trackQueue.length > 0;
+      indicator.hidden = !hasQueue;
+      list.hidden = !hasQueue;
       count.textContent = `Up next: ${trackQueue.length} queued`;
 
       list.innerHTML = trackQueue.map(idx => `
         <li><span class="np-queue-title">${songs[idx].title}</span><button class="np-queue-remove" onclick="toggleQueueTrack(${idx})" title="Remove from queue">×</button></li>
       `).join('');
 
-      if (trackQueue.length === 0) {
-        list.hidden = true;
-        indicator.classList.remove('open');
-      }
-    }
-
-    function toggleQueuePanel() {
-      const list = document.getElementById('np-queue-list');
-      const indicator = document.getElementById('np-queue-indicator');
-      if (!list) return;
-      list.hidden = !list.hidden;
-      indicator.classList.toggle('open', !list.hidden);
+      updatePackBarPosition();
     }
 
     function clearQueue() {
