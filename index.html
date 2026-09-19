@@ -615,12 +615,19 @@
       list-style: none;
       margin: 0.3rem 0 0;
       padding: 0;
-      display: flex;
       flex-direction: column;
       gap: 0.3rem;
       max-height: 140px;
       overflow-y: auto;
       width: 100%;
+    }
+    /* Only apply flex layout when the list isn't [hidden] -- an
+       unconditional "display: flex" here would override the browser's
+       native [hidden] { display: none } rule (author CSS always wins over
+       the UA stylesheet), leaving the "collapsed" list still rendered and
+       silently taking up height even when nothing was expanded. */
+    .np-queue-list:not([hidden]) {
+      display: flex;
     }
     .np-queue-list li {
       display: flex;
