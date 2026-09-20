@@ -601,6 +601,7 @@
       margin: 0.3rem 0 0;
       padding: 0;
       flex-direction: column;
+      flex-shrink: 0;
       gap: 0.3rem;
       max-height: 140px;
       overflow-y: auto;
@@ -755,7 +756,12 @@
         justify-content: flex-start;
         border-radius: 18px 18px 0 0;
         border-top: 1px solid var(--accent);
-        padding: 2rem 1.5rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
+        /* Top padding has to clear the absolutely-positioned .np-close
+           button (top: 0.85rem + 34px tall = ~48px from the sheet's top) --
+           this site has no album art to naturally push the title below it
+           like the other sites do, so the title was rendering right under
+           the close button and getting visually cut off by it. */
+        padding: 3.5rem 1.5rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
         gap: 1.5rem;
         overflow-y: auto;
         background: rgba(15, 15, 17, 0.98);
@@ -774,6 +780,7 @@
         display: flex;
         order: 0;
         gap: 1rem;
+        overflow: visible;
       }
 
       .now-playing-bar.expanded .np-meta-row {
@@ -781,6 +788,7 @@
         align-items: center;
         text-align: center;
         gap: 0.5rem;
+        overflow: visible;
       }
 
       .now-playing-bar.expanded .np-date {
