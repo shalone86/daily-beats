@@ -603,8 +603,6 @@
       flex-direction: column;
       flex-shrink: 0;
       gap: 0.3rem;
-      max-height: 140px;
-      overflow-y: auto;
       width: 100%;
     }
     /* Only apply flex layout when the list isn't [hidden] -- an
@@ -749,7 +747,12 @@
         position: fixed;
         top: auto;
         height: auto;
-        max-height: 50vh;
+        /* Generous enough that the sheet can grow to fit up to 3 queued
+           tracks (the queue list is capped there -- see updateQueueIndicator)
+           without ever needing to scroll internally and hide the action
+           buttons below the fold; overflow-y below is just a fallback for
+           genuinely tiny viewports, not the normal path. */
+        max-height: 85vh;
         z-index: 500;
         flex-direction: column;
         align-items: stretch;
@@ -1112,6 +1115,7 @@
     let isShuffleActive = false;
     let currentTrackIndex = -1;
     let trackQueue = [];
+    const QUEUE_LIST_VISIBLE_MAX = 3;
     let currentSort = 'day';
     let sortAsc = false;
     let activeGenre = 'All';
@@ -1885,7 +1889,10 @@
       list.hidden = !hasQueue;
       count.textContent = `Up next: ${trackQueue.length} queued`;
 
-      list.innerHTML = trackQueue.map(idx => `
+      // Show at most the first few -- growing the sheet to fit an unbounded
+      // queue (or scrolling inside it) isn't worth the complexity for what's
+      // meant to be a simple queue, not a full playlist view.
+      list.innerHTML = trackQueue.slice(0, QUEUE_LIST_VISIBLE_MAX).map(idx => `
         <li><span class="np-queue-title">${songs[idx].title}</span><button class="np-queue-remove" onclick="toggleQueueTrack(${idx})" title="Remove from queue">×</button></li>
       `).join('');
 
