@@ -240,9 +240,24 @@
       fetch(CATALOG_URL)
         .then(res => res.json())
         .then(catalogData => {
-          // Catalog is a flat array of track objects (no albums) -- kids
-          // just get titles, no day/date/bpm/key/genre metadata.
-          songs = catalogData.map(t => ({
+          // The catalog can be a flat array of tracks, or an array of
+          // albums each with their own tracks[] -- match the main site's
+          // own detection so both shapes work. Either way, kids just get
+          // titles, no day/date/bpm/key/genre metadata.
+          let rawTracks = [];
+          if (Array.isArray(catalogData)) {
+            if (catalogData.length > 0 && catalogData[0].tracks) {
+              catalogData.forEach(album => {
+                if (album.tracks && album.tracks.length > 0) {
+                  rawTracks.push(...album.tracks);
+                }
+              });
+            } else {
+              rawTracks = catalogData;
+            }
+          }
+
+          songs = rawTracks.map(t => ({
             title: t.title || "Untitled Beat",
             url: `${MEDIA_BASE}/${encodeURI(t.path || t.file)}`
           }));
