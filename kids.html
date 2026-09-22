@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Kids Player — Shalone's Beats</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/kids.webmanifest" />
+  <meta name="theme-color" content="#121214" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Beats Player" />
+  <style>
+    :root {
+      --bg: #121214;
+      --card-bg: #1b1b1e;
+      --border: #2e2e34;
+      --text: #e4e4e7;
+      --muted: #a1a1aa;
+      --accent: #e0a868;
+      --accent-hover: #f0be82;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      padding-bottom: 6rem;
+    }
+    .container { max-width: 640px; margin: 0 auto; padding: 1.5rem 1rem; }
+    h1 {
+      text-align: center;
+      font-size: 1.6rem;
+      color: var(--accent);
+      margin: 0.5rem 0 1.5rem;
+    }
+    .btn-shuffle {
+      display: block;
+      width: 100%;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      padding: 1rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 1.5rem;
+    }
+    .btn-shuffle:hover { background: var(--accent-hover); }
+
+    .track-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      cursor: pointer;
+    }
+    .track-row.playing { border-color: var(--accent); }
+    .track-title { font-size: 0.95rem; }
+    .track-play-icon { color: var(--accent); font-size: 1.2rem; flex-shrink: 0; }
+    .loading, .empty { text-align: center; color: var(--muted); padding: 2rem 0; }
+
+    .now-playing-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(27, 27, 30, 0.97);
+      border-top: 1px solid var(--accent);
+      padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .now-playing-bar.visible { display: flex; }
+    .np-title {
+      flex: 1;
+      min-width: 0;
+      font-size: 0.9rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .np-controls { display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+    .btn-np {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    .btn-np-toggle {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .big-player {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem calc(6rem + env(safe-area-inset-bottom, 0px));
+      transform: translateY(100%);
+      opacity: 0;
+      transition: transform 0.3s ease, opacity 0.3s ease;
+      pointer-events: none;
+      z-index: 50;
+    }
+    .big-player.visible { transform: translateY(0); opacity: 1; pointer-events: auto; }
+    .big-player-close {
+      position: absolute;
+      bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 999px;
+      padding: 0.75rem 1.75rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .big-player-art {
+      width: min(75vw, 340px);
+      height: min(75vw, 340px);
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--border);
+      margin-bottom: 1.5rem;
+      background: linear-gradient(160deg, rgba(224, 168, 104, 0.35), rgba(224, 168, 104, 0.08));
+    }
+    .big-player-art-symbol { font-size: 5rem; }
+    .big-player-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 2.5rem;
+      padding: 0 1rem;
+    }
+    .big-player-controls { display: flex; align-items: center; gap: 1.5rem; }
+    .btn-big {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+    .btn-big-toggle {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      font-size: 1.8rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body oncontextmenu="return false">
+
+  <div class="container">
+    <h1>🎵 Shalone's Beats</h1>
+    <button class="btn-shuffle" onclick="playRandomTrack()">🔀 Play Something</button>
+    <div id="track-list">
+      <div class="loading">Loading songs…</div>
+    </div>
+  </div>
+
+  <div class="now-playing-bar" id="now-playing-bar" onclick="expandBigPlayer()">
+    <div class="np-title" id="np-title">—</div>
+    <div class="np-controls">
+      <button class="btn-np" onclick="event.stopPropagation(); playPrevTrack()">⏮</button>
+      <button class="btn-np-toggle" id="btn-np-toggle" onclick="event.stopPropagation(); toggleNowPlaying()">⏸</button>
+      <button class="btn-np" onclick="event.stopPropagation(); playNextTrack()">⏭</button>
+      <button class="btn-np" onclick="event.stopPropagation(); playRandomTrack()">🔀</button>
+    </div>
+  </div>
+
+  <div class="big-player" id="big-player">
+    <button class="big-player-close" onclick="collapseBigPlayer()" aria-label="Close">✕ Close</button>
+    <div class="big-player-art">
+      <span class="big-player-art-symbol">🎵</span>
+    </div>
+    <div class="big-player-title" id="big-player-title">—</div>
+    <div class="big-player-controls">
+      <button class="btn-big" onclick="playPrevTrack()">⏮</button>
+      <button class="btn-big-toggle" id="btn-big-toggle" onclick="toggleNowPlaying()">⏸</button>
+      <button class="btn-big" onclick="playNextTrack()">⏭</button>
+    </div>
+  </div>
+
+  <audio id="audio" controlsList="nodownload noplaybackrate" oncontextmenu="return false"></audio>
+
+  <script>
+    const MEDIA_BASE = "https://daily.shalonely.com";
+    const CATALOG_URL = `${MEDIA_BASE}/catalog.json`;
+
+    const audio = document.getElementById('audio');
+    let songs = [];
+    let currentIndex = -1;
+
+    function loadCatalog() {
+      fetch(CATALOG_URL)
+        .then(res => res.json())
+        .then(catalogData => {
+          // Catalog is a flat array of track objects (no albums) -- kids
+          // just get titles, no day/date/bpm/key/genre metadata.
+          songs = catalogData.map(t => ({
+            title: t.title || "Untitled Beat",
+            url: `${MEDIA_BASE}/${encodeURI(t.path || t.file)}`
+          }));
+          renderTracks();
+        })
+        .catch(() => {
+          document.getElementById('track-list').innerHTML = '<div class="empty">Couldn\'t load songs right now.</div>';
+        });
+    }
+
+    function renderTracks() {
+      const listEl = document.getElementById('track-list');
+      if (songs.length === 0) {
+        listEl.innerHTML = '<div class="empty">No songs found.</div>';
+        return;
+      }
+
+      listEl.innerHTML = songs.map((song, i) => `
+        <div class="track-row" id="track-row-${i}" onclick="playTrackByIndex(${i})">
+          <span class="track-title">${song.title}</span>
+          <span class="track-play-icon">▶</span>
+        </div>
+      `).join('');
+    }
+
+    function updateToggleIcons(icon) {
+      document.getElementById('btn-np-toggle').textContent = icon;
+      document.getElementById('btn-big-toggle').textContent = icon;
+    }
+
+    function expandBigPlayer() {
+      if (currentIndex === -1) return;
+      document.getElementById('big-player').classList.add('visible');
+    }
+
+    function collapseBigPlayer() {
+      document.getElementById('big-player').classList.remove('visible');
+    }
+
+    function playTrackByIndex(i) {
+      if (i < 0 || i >= songs.length) return;
+      document.querySelectorAll('.track-row.playing').forEach(el => el.classList.remove('playing'));
+      const row = document.getElementById(`track-row-${i}`);
+      if (row) {
+        row.classList.add('playing');
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      currentIndex = i;
+      const song = songs[i];
+      audio.src = song.url;
+      audio.play();
+
+      document.getElementById('np-title').textContent = song.title;
+      document.getElementById('now-playing-bar').classList.add('visible');
+      document.getElementById('big-player-title').textContent = song.title;
+
+      expandBigPlayer();
+    }
+
+    function playRandomTrack() {
+      if (songs.length === 0) return;
+      const randomIdx = Math.floor(Math.random() * songs.length);
+      playTrackByIndex(randomIdx);
+    }
+
+    function playNextTrack() {
+      if (songs.length === 0) return;
+      playTrackByIndex((currentIndex + 1) % songs.length);
+    }
+
+    function playPrevTrack() {
+      if (songs.length === 0) return;
+      playTrackByIndex((currentIndex - 1 + songs.length) % songs.length);
+    }
+
+    function toggleNowPlaying() {
+      if (currentIndex === -1) {
+        playRandomTrack();
+        return;
+      }
+      if (audio.paused) {
+        audio.play();
+      } else {
+        audio.pause();
+      }
+    }
+
+    audio.addEventListener('play', () => updateToggleIcons('⏸'));
+    audio.addEventListener('pause', () => updateToggleIcons('▶'));
+    audio.addEventListener('ended', playNextTrack);
+
+    loadCatalog();
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/kids-sw.js', { scope: '/kids.html' }).catch(err => {
+          console.error('Kids Service Worker registration failed:', err);
+        });
+      });
+    }
+  </script>
+</body>
+</html>
