@@ -1,8 +1,9 @@
 {
-  "name": "Shalone's Beats",
-  "short_name": "Shalone",
-  "start_url": "/",
-  "id": "/",
+  "name": "Shalone's Beats Player",
+  "short_name": "Beats Player",
+  "start_url": "/kids.html",
+  "scope": "/kids.html",
+  "id": "/kids.html",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
@@ -17,7 +18,7 @@
       "purpose": "maskable"
     }
   ],
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff",
+  "theme_color": "#121214",
+  "background_color": "#121214",
   "display": "standalone"
 }
