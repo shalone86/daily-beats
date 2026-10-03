@@ -616,12 +616,43 @@
     .np-queue-list li {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 0.5rem;
+      gap: 0.4rem;
       font-size: 0.75rem;
       color: var(--text);
+      border-radius: 4px;
     }
+    /* Drag handle for reordering. touch-action: none keeps a finger drag
+       on the handle from scrolling the page or the player sheet. */
+    .np-queue-list .np-queue-grip {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      cursor: grab;
+      touch-action: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .np-queue-list .np-queue-grip:hover,
+    .np-queue-list .np-queue-grip:focus-visible { color: var(--text); }
+    .np-queue-list.reordering li { transition: transform 0.15s ease; }
+    .np-queue-list.reordering li.dragging {
+      transition: none;
+      position: relative;
+      z-index: 1;
+      background: var(--card-bg);
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+      cursor: grabbing;
+    }
+    .np-queue-list.reordering li.dragging .np-queue-grip { cursor: grabbing; color: var(--accent); }
     .np-queue-list .np-queue-title {
+      flex: 1;
+      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -661,13 +692,59 @@
     }
     .btn-np-action:hover { border-color: var(--accent); color: var(--accent); }
 
-    .np-fullplayer-btn {
-      width: 34px;
-      padding: 0;
+    .np-sleep-btn { gap: 0.35rem; }
+    .np-sleep-btn.active { border-color: var(--accent); color: var(--accent); }
+
+    /* Sleep timer: a popover above the bar on desktop (opened by the Sleep
+       button), a row inside the pulled-up player on phones. */
+    .np-sleep {
+      display: none;
+      flex-direction: column;
+      gap: 0.5rem;
     }
-    .np-fullplayer-btn svg {
-      transition: transform 0.2s;
+    .np-sleep.open {
+      display: flex;
+      position: absolute;
+      bottom: calc(100% + 8px);
+      right: 1.2rem;
+      width: 320px;
+      padding: 0.8rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
     }
+    .np-sleep-label {
+      font-family: var(--font-heading);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+    .np-sleep-options { display: flex; gap: 0.4rem; }
+    .np-sleep-options button {
+      flex: 1;
+      min-height: 38px;
+      padding: 0 0.4rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 0.8rem;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .np-sleep-options button:hover { border-color: var(--accent); }
+    .np-sleep-options button[aria-pressed="true"] {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+    }
+    .np-sleep-status { font-size: 0.78rem; color: var(--muted); }
 
     .np-handle {
       display: none;
@@ -754,6 +831,8 @@
            genuinely tiny viewports, not the normal path. */
         max-height: 85vh;
         z-index: 500;
+        animation: np-sheet-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+        overscroll-behavior: contain;
         flex-direction: column;
         align-items: stretch;
         justify-content: flex-start;
@@ -830,7 +909,7 @@
       }
 
       .now-playing-bar.expanded .np-side-actions {
-        order: 2;
+        order: 3;
         justify-content: center;
         gap: 0.75rem;
         margin-top: 1.5rem;
@@ -851,9 +930,28 @@
         display: none !important;
       }
 
-      .now-playing-bar.expanded .np-fullplayer-btn svg {
-        transform: rotate(180deg);
+      .now-playing-bar.expanded .np-sleep {
+        display: flex;
+        order: 2;
+        position: static;
+        width: auto;
+        padding: 0;
+        background: none;
+        border: none;
+        box-shadow: none;
       }
+      .now-playing-bar.expanded .np-sleep-options button { min-height: 44px; }
+
+      /* Finger-sized queue rows in the phone sheet. */
+      .now-playing-bar.expanded .np-queue-list { gap: 0; }
+      .now-playing-bar.expanded .np-queue-list li { min-height: 44px; font-size: 0.9rem; }
+      .now-playing-bar.expanded .np-queue-list .np-queue-grip { width: 40px; height: 44px; margin-left: -0.6rem; }
+      .now-playing-bar.expanded .np-queue-list .np-queue-remove { min-width: 44px; min-height: 44px; font-size: 1.2rem; }
+    }
+
+    @keyframes np-sheet-in {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
     }
 
     .modal {
@@ -1031,7 +1129,7 @@
   <div class="np-backdrop" id="np-backdrop" onclick="closeExpandedPlayer()"></div>
 
   <div class="now-playing-bar" id="now-playing-bar">
-    <div class="np-handle" onclick="toggleExpandedPlayer()" role="button" aria-label="Expand player" tabindex="0"></div>
+    <div class="np-handle" onclick="toggleExpandedPlayer()" onkeydown="if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); toggleExpandedPlayer(); }" role="button" aria-label="Open or close the full player" tabindex="0"></div>
 
     <button class="np-close" onclick="closeExpandedPlayer()" aria-label="Close player">✕</button>
 
@@ -1060,9 +1158,22 @@
       <ul class="np-queue-list" id="np-queue-list" hidden></ul>
     </div>
 
+    <div class="np-sleep" id="np-sleep" role="group" aria-label="Sleep timer">
+      <span class="np-sleep-label">Stop after</span>
+      <div class="np-sleep-options">
+        <button type="button" data-sleep="off" aria-pressed="true" onclick="setSleepTimer('off')">Off</button>
+        <button type="button" data-sleep="15" aria-pressed="false" onclick="setSleepTimer('15')">15m</button>
+        <button type="button" data-sleep="30" aria-pressed="false" onclick="setSleepTimer('30')">30m</button>
+        <button type="button" data-sleep="60" aria-pressed="false" onclick="setSleepTimer('60')">1h</button>
+        <button type="button" data-sleep="end" aria-pressed="false" onclick="setSleepTimer('end')">Song end</button>
+      </div>
+      <span class="np-sleep-status" id="np-sleep-status" hidden></span>
+    </div>
+
     <div class="np-side-actions">
-      <button class="btn-np-action np-fullplayer-btn mobile-only" onclick="toggleExpandedPlayer()" title="Full Player" aria-label="Open full player">
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>
+      <button class="btn-np-action np-sleep-btn desktop-only" id="np-sleep-btn" onclick="toggleSleepMenu()" title="Sleep timer" aria-haspopup="true" aria-controls="np-sleep">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        <span id="np-sleep-btn-label">Sleep</span>
       </button>
 
       <button class="btn-np-action" onclick="jumpToCurrentTrack()" title="Scroll to playing track">View Track</button>
@@ -1322,15 +1433,201 @@
       if (show) renderMonthlyCalendar();
     }
 
-    function toggleExpandedPlayer() {
-      document.getElementById('now-playing-bar').classList.toggle('expanded');
-      document.getElementById('np-backdrop').classList.toggle('active');
+    const SHEET_CLOSE_MS = 220;
+    const isPhoneLayout = () => window.matchMedia('(max-width: 640px)').matches;
+
+    function openExpandedPlayer() {
+      document.getElementById('now-playing-bar').classList.add('expanded');
+      document.getElementById('np-backdrop').classList.add('active');
     }
 
-    function closeExpandedPlayer() {
-      document.getElementById('now-playing-bar').classList.remove('expanded');
-      document.getElementById('np-backdrop').classList.remove('active');
+    function toggleExpandedPlayer() {
+      if (document.getElementById('now-playing-bar').classList.contains('expanded')) {
+        closeExpandedPlayer();
+      } else {
+        openExpandedPlayer();
+      }
     }
+
+    // On phones the sheet slides down (from wherever a drag left it) before
+    // it's hidden.
+    function closeExpandedPlayer() {
+      const bar = document.getElementById('now-playing-bar');
+      const backdrop = document.getElementById('np-backdrop');
+      if (!bar.classList.contains('expanded')) return;
+      const finish = () => {
+        bar.classList.remove('expanded');
+        backdrop.classList.remove('active');
+        bar.style.transition = '';
+        bar.style.transform = '';
+        backdrop.style.transition = '';
+        backdrop.style.opacity = '';
+      };
+      if (!isPhoneLayout()) {
+        finish();
+        return;
+      }
+      bar.style.transition = `transform ${SHEET_CLOSE_MS}ms ease-in`;
+      bar.style.transform = 'translateY(100%)';
+      backdrop.style.transition = `opacity ${SHEET_CLOSE_MS}ms`;
+      backdrop.style.opacity = '0';
+      setTimeout(finish, SHEET_CLOSE_MS);
+    }
+
+    // Phone player: swipe up (or tap the bar) to open, drag down to close.
+    function setupSheetGestures() {
+      const bar = document.getElementById('now-playing-bar');
+      const backdrop = document.getElementById('np-backdrop');
+      const queueList = document.getElementById('np-queue-list');
+      let drag = null;
+
+      bar.addEventListener('touchstart', (e) => {
+        if (!isPhoneLayout() || e.touches.length !== 1) return;
+        const touch = e.touches[0];
+        drag = {
+          startX: touch.clientX,
+          startY: touch.clientY,
+          startTime: Date.now(),
+          expanded: bar.classList.contains('expanded'),
+          // A scrolled queue list scrolls back up before the sheet moves.
+          atTop: bar.scrollTop <= 0 && !(e.target.closest('.np-queue-list') && queueList.scrollTop > 0),
+          // The seek bar and queue handles have drags of their own.
+          ownGesture: !!e.target.closest('.np-progress-bg, .np-queue-grip'),
+          active: false,
+          dy: 0
+        };
+      }, { passive: true });
+
+      bar.addEventListener('touchmove', (e) => {
+        if (!drag || drag.ownGesture) return;
+        const touch = e.touches[0];
+        const dx = touch.clientX - drag.startX;
+        const dy = touch.clientY - drag.startY;
+        if (!drag.active) {
+          if (Math.abs(dy) < 8 || Math.abs(dy) < Math.abs(dx)) return;
+          if (!drag.expanded && dy < 0) {
+            drag = null;
+            openExpandedPlayer();
+            return;
+          }
+          // Only pull the sheet down when its content is scrolled to the top;
+          // otherwise the drag scrolls the sheet as usual.
+          if (!drag.expanded || dy < 0 || !drag.atTop) {
+            drag = null;
+            return;
+          }
+          drag.active = true;
+          bar.style.transition = 'none';
+        }
+        e.preventDefault();
+        drag.dy = Math.max(0, dy);
+        bar.style.transform = `translateY(${drag.dy}px)`;
+        backdrop.style.opacity = String(Math.max(0, 1 - drag.dy / bar.offsetHeight));
+      }, { passive: false });
+
+      const endDrag = () => {
+        if (drag && drag.active) {
+          const speed = drag.dy / Math.max(1, Date.now() - drag.startTime);
+          if (drag.dy > bar.offsetHeight * 0.25 || speed > 0.6) {
+            closeExpandedPlayer();
+          } else {
+            bar.style.transition = 'transform 0.2s ease-out';
+            bar.style.transform = '';
+            backdrop.style.opacity = '';
+          }
+        }
+        drag = null;
+      };
+      bar.addEventListener('touchend', endDrag);
+      bar.addEventListener('touchcancel', endDrag);
+
+      bar.addEventListener('click', (e) => {
+        if (!isPhoneLayout() || bar.classList.contains('expanded')) return;
+        if (e.target.closest('button, a, .np-progress-bg')) return;
+        openExpandedPlayer();
+      });
+
+      // Keep the page behind the open sheet from scrolling.
+      backdrop.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+    }
+
+    // Sleep timer: 'off', 'end' (stop when this song ends) or minutes.
+    const SLEEP_FADE_MS = 8000;
+    let sleepTimer = { mode: 'off', endsAt: 0, fading: false };
+    let sleepTick = null;
+
+    function setSleepTimer(mode) {
+      clearInterval(sleepTick);
+      sleepTick = null;
+      const minutes = Number(mode);
+      sleepTimer = { mode, endsAt: minutes ? Date.now() + minutes * 60000 : 0, fading: false };
+      if (sleepTimer.endsAt) sleepTick = setInterval(checkSleepTimer, 1000);
+      document.getElementById('np-sleep').classList.remove('open');
+      renderSleepTimer();
+    }
+
+    function toggleSleepMenu() {
+      document.getElementById('np-sleep').classList.toggle('open');
+    }
+
+    function checkSleepTimer() {
+      if (!sleepTimer.endsAt) return;
+      if (!sleepTimer.fading && sleepTimer.endsAt - Date.now() <= SLEEP_FADE_MS) {
+        sleepTimer.fading = true;
+        fadeOutAndPause(audio, sleepTimer.endsAt - Date.now(), () => setSleepTimer('off'));
+      }
+      renderSleepTimer();
+    }
+
+    // iOS ignores audio.volume, so there the music simply pauses on time.
+    function fadeOutAndPause(audio, durationMs, done) {
+      if (!audio || audio.paused) {
+        done();
+        return;
+      }
+      const startVolume = audio.volume;
+      const steps = 40;
+      let step = 0;
+      const fade = setInterval(() => {
+        step++;
+        audio.volume = Math.max(0, startVolume * (1 - step / steps));
+        if (step >= steps) {
+          clearInterval(fade);
+          audio.pause();
+          audio.volume = startVolume;
+          done();
+        }
+      }, Math.max(25, durationMs / steps));
+    }
+
+    function renderSleepTimer() {
+      document.querySelectorAll('#np-sleep [data-sleep]').forEach(btn => {
+        btn.setAttribute('aria-pressed', String(btn.dataset.sleep === sleepTimer.mode));
+      });
+      let status = '';
+      let buttonLabel = 'Sleep';
+      if (sleepTimer.mode === 'end') {
+        status = 'Stops after this song.';
+        buttonLabel = 'Sleep: song end';
+      } else if (sleepTimer.endsAt) {
+        const remaining = Math.max(0, sleepTimer.endsAt - Date.now());
+        const clock = new Date(sleepTimer.endsAt).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+        status = sleepTimer.fading ? 'Fading out…' : `Music fades out at ${clock}.`;
+        buttonLabel = `Sleep ${formatTime(remaining / 1000)}`;
+      }
+      const statusEl = document.getElementById('np-sleep-status');
+      statusEl.textContent = status;
+      statusEl.hidden = !status;
+      document.getElementById('np-sleep-btn-label').textContent = buttonLabel;
+      document.getElementById('np-sleep-btn').classList.toggle('active', sleepTimer.mode !== 'off');
+    }
+
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('np-sleep');
+      if (menu.classList.contains('open') && !e.target.closest('#np-sleep, #np-sleep-btn')) {
+        menu.classList.remove('open');
+      }
+    });
 
     function formatTime(seconds) {
       if (isNaN(seconds) || seconds < 0) return "00:00";
@@ -1892,11 +2189,108 @@
       // Show at most the first few -- growing the sheet to fit an unbounded
       // queue (or scrolling inside it) isn't worth the complexity for what's
       // meant to be a simple queue, not a full playlist view.
-      list.innerHTML = trackQueue.slice(0, QUEUE_LIST_VISIBLE_MAX).map(idx => `
-        <li><span class="np-queue-title">${songs[idx].title}</span><button class="np-queue-remove" onclick="toggleQueueTrack(${idx})" title="Remove from queue">×</button></li>
-      `).join('');
+      list.replaceChildren(...trackQueue.slice(0, QUEUE_LIST_VISIBLE_MAX).map((idx) => {
+        const title = songs[idx].title;
+        const li = document.createElement('li');
+
+        const grip = document.createElement('button');
+        grip.type = 'button';
+        grip.className = 'np-queue-grip';
+        grip.title = 'Drag to reorder';
+        grip.setAttribute('aria-label', `Move ${title}. Drag, or use the up and down arrow keys.`);
+        grip.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg>';
+
+        const titleEl = document.createElement('span');
+        titleEl.className = 'np-queue-title';
+        titleEl.textContent = title;
+
+        const remove = document.createElement('button');
+        remove.type = 'button';
+        remove.className = 'np-queue-remove';
+        remove.title = 'Remove from queue';
+        remove.setAttribute('aria-label', `Remove ${title} from the queue`);
+        remove.textContent = '×';
+        remove.addEventListener('click', () => toggleQueueTrack(idx));
+
+        li.append(grip, titleEl, remove);
+        return li;
+      }));
 
       updatePackBarPosition();
+    }
+
+    function moveQueueItem(from, to) {
+      if (from === to || to < 0 || to >= trackQueue.length) return;
+      const [track] = trackQueue.splice(from, 1);
+      trackQueue.splice(to, 0, track);
+      updateQueueIndicator();
+    }
+
+    // Drag a queued song by its handle to reorder it. Pointer events cover
+    // mouse and touch alike. The handle also takes the up and down arrow
+    // keys, for keyboards and screen readers.
+    function setupQueueDrag() {
+      const list = document.getElementById('np-queue-list');
+      let drag = null;
+
+      list.addEventListener('pointerdown', (e) => {
+        const grip = e.target.closest('.np-queue-grip');
+        if (!grip || (e.pointerType === 'mouse' && e.button !== 0)) return;
+        e.preventDefault();
+        const items = [...list.children];
+        const li = grip.closest('li');
+        const from = items.indexOf(li);
+        const step = items.length > 1 ? items[1].offsetTop - items[0].offsetTop : li.offsetHeight;
+        drag = { pointerId: e.pointerId, li, items, from, to: from, step, startY: e.clientY, startScroll: list.scrollTop };
+        grip.setPointerCapture(e.pointerId);
+        list.classList.add('reordering');
+        li.classList.add('dragging');
+      });
+
+      list.addEventListener('pointermove', (e) => {
+        if (!drag || e.pointerId !== drag.pointerId) return;
+        // Scroll a long queue when the song is dragged to its top or bottom edge.
+        const box = list.getBoundingClientRect();
+        if (e.clientY < box.top + 16) list.scrollTop -= 6;
+        else if (e.clientY > box.bottom - 16) list.scrollTop += 6;
+
+        const dy = e.clientY - drag.startY + (list.scrollTop - drag.startScroll);
+        drag.li.style.transform = `translateY(${dy}px)`;
+        const to = Math.max(0, Math.min(drag.items.length - 1, Math.round(drag.from + dy / drag.step)));
+        if (to === drag.to) return;
+        drag.to = to;
+        drag.items.forEach((item, i) => {
+          if (item === drag.li) return;
+          let shift = 0;
+          if (drag.from < to && i > drag.from && i <= to) shift = -drag.step;
+          if (drag.from > to && i >= to && i < drag.from) shift = drag.step;
+          item.style.transform = shift ? `translateY(${shift}px)` : '';
+        });
+      });
+
+      const endDrag = (e) => {
+        if (!drag || e.pointerId !== drag.pointerId) return;
+        const { li, from, to } = drag;
+        drag = null;
+        list.classList.remove('reordering');
+        // If a song ended mid-drag the list was redrawn, so skip the move.
+        if (li.isConnected && from !== to) moveQueueItem(from, to);
+        else updateQueueIndicator();
+      };
+      list.addEventListener('pointerup', endDrag);
+      list.addEventListener('pointercancel', endDrag);
+
+      list.addEventListener('keydown', (e) => {
+        const grip = e.target.closest('.np-queue-grip');
+        if (!grip || (e.key !== 'ArrowUp' && e.key !== 'ArrowDown')) return;
+        e.preventDefault();
+        const from = [...list.children].indexOf(grip.closest('li'));
+        const to = from + (e.key === 'ArrowUp' ? -1 : 1);
+        // Only the first few queued songs are listed, so stay among those.
+        if (to < 0 || to >= list.children.length) return;
+        moveQueueItem(from, to);
+        list.children[to].querySelector('.np-queue-grip').focus();
+      });
     }
 
     function clearQueue() {
@@ -2004,11 +2398,18 @@
     });
 
     audio.addEventListener('ended', () => {
+      // "Stop after this song", or the timer ran out while fading.
+      if (sleepTimer.mode === 'end' || sleepTimer.fading) {
+        setSleepTimer('off');
+        return;
+      }
       playNextTrack();
     });
 
     window.addEventListener('hashchange', handleDeepLink);
 
+    setupSheetGestures();
+    setupQueueDrag();
     loadCatalog();
   </script>
   <script>
