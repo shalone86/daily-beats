@@ -1224,6 +1224,9 @@
     let songs = [];
     let selectedTracks = [];
     let isShuffleActive = false;
+    // Song indexes in the order the list currently shows them (sort, genre,
+    // tempo and search applied). Next and previous follow this order.
+    let visibleOrder = [];
     let currentTrackIndex = -1;
     let trackQueue = [];
     const QUEUE_LIST_VISIBLE_MAX = 3;
@@ -1839,6 +1842,8 @@
         return sortAsc ? a.title.localeCompare(b.title) : b.title.localeCompare(a.title);
       });
 
+      visibleOrder = filtered.map(song => songs.indexOf(song));
+
       filtered.forEach(song => {
         const globalIdx = songs.indexOf(song);
         const trackSlug = slugify(song.title);
@@ -1888,7 +1893,7 @@
           ${lyricsHtml}
           ${song.description ? `<div class="track-desc">${song.description}</div>` : ''}
           <div class="track-actions">
-            <button class="play-btn" onclick="playTrackByIndex(${globalIdx})">▶ Play</button>
+            <button class="play-btn" onclick="playFromList(${globalIdx})">▶ Play</button>
             <button class="btn-queue${queuedClass}" onclick="toggleQueueTrack(${globalIdx})" title="Add to queue">
               <span class="desktop-only">+ Queue</span>
               <span class="mobile-only">+</span>
@@ -2053,7 +2058,7 @@
               dayCell.onclick = () => {
                 toggleCalendarModal(false);
                 const idx = songs.indexOf(dayMap[dayNum]);
-                playTrackByIndex(idx);
+                playFromList(idx);
                 jumpToTrackByDay(dayNum);
               };
             } else if (dayNum) {
@@ -2302,6 +2307,23 @@
       updateQueueIndicator();
     }
 
+    // Picking a song yourself ends shuffle, so the songs after it continue
+    // down the list as shown.
+    function playFromList(index) {
+      isShuffleActive = false;
+      playTrackByIndex(index);
+    }
+
+    // The song one step down (1) or up (-1) the list as shown, wrapping
+    // around at the ends. If the playing song isn't in the list (say, the
+    // filter changed since it started), start from the top of the list.
+    function stepThroughList(step) {
+      const order = visibleOrder.length > 0 ? visibleOrder : songs.map((_, i) => i);
+      const pos = order.indexOf(currentTrackIndex);
+      if (pos === -1) return order[0];
+      return order[(pos + step + order.length) % order.length];
+    }
+
     function playNextTrack() {
       if (trackQueue.length > 0) {
         const nextIdx = trackQueue[0];
@@ -2314,8 +2336,7 @@
       if (isShuffleActive || currentTrackIndex === -1) {
         playRandomTrack();
       } else {
-        const nextIdx = (currentTrackIndex + 1) % songs.length;
-        playTrackByIndex(nextIdx);
+        playTrackByIndex(stepThroughList(1));
       }
     }
 
@@ -2324,8 +2345,7 @@
       if (isShuffleActive || currentTrackIndex === -1) {
         playRandomTrack();
       } else {
-        const prevIdx = (currentTrackIndex - 1 + songs.length) % songs.length;
-        playTrackByIndex(prevIdx);
+        playTrackByIndex(stepThroughList(-1));
       }
     }
 
