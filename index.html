@@ -579,65 +579,133 @@
       transition: width 0.1s linear;
     }
 
-    .np-queue-indicator {
+    /* The queue lives in its own panel: a popover above the player bar on
+       desktop (opened by the Queue button), a sheet over the full player on
+       phones (opened from the "Up next" strip at the bottom of the player). */
+    .queue-panel[hidden] { display: none; }
+    .queue-panel {
+      position: fixed;
+      right: 1.2rem;
+      bottom: 80px;
+      z-index: 210;
+      width: 380px;
+      max-height: min(560px, 70vh);
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      padding: 0.85rem 0.75rem 0.75rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+      font-family: var(--font-sans);
+      color: var(--text);
+    }
+    .qp-handle { display: none; }
+    .qp-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      padding: 0 0.35rem 0.25rem;
+    }
+    .qp-title { font-family: var(--font-heading); font-size: 1.1rem; font-weight: 600; line-height: 1.2; }
+    .qp-count { display: block; font-size: 0.8rem; color: var(--muted); }
+    .qp-header-actions { display: flex; gap: 0.4rem; }
+    .qp-clear, .qp-close {
+      height: 34px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 0.82rem;
+      cursor: pointer;
+    }
+    .qp-clear { padding: 0 0.8rem; }
+    .qp-close { width: 34px; padding: 0; border-radius: 50%; }
+    .qp-clear:hover, .qp-close:hover { border-color: var(--accent); }
+    .qp-now, .qp-label, .qp-mini { display: none; }
+    .qp-empty { padding: 1.25rem 0.5rem; text-align: center; font-size: 0.88rem; color: var(--muted); }
+    .qp-thumb { width: 44px; height: 44px; border-radius: 6px; font-size: 1.1rem; }
+
+    .np-queue-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      min-height: 0;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    .np-queue-list li {
+      min-height: 60px;
+      box-sizing: border-box;
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-size: 0.72rem;
-      color: var(--muted);
+      padding: 0.4rem 0.15rem 0.4rem 0;
+      border-radius: 8px;
+      color: var(--text);
     }
-    .np-queue-indicator .np-queue-clear {
-      background: transparent;
-      border: none;
-      color: var(--accent);
-      font-size: 0.72rem;
-      font-family: var(--font-sans);
-      cursor: pointer;
-      padding: 0;
-      text-decoration: underline;
-    }
-    .np-queue-list {
-      list-style: none;
-      margin: 0.3rem 0 0;
-      padding: 0;
-      flex-direction: column;
-      flex-shrink: 0;
-      gap: 0.3rem;
-      width: 100%;
-    }
-    /* Only apply flex layout when the list isn't [hidden] -- an
-       unconditional "display: flex" here would override the browser's
-       native [hidden] { display: none } rule (author CSS always wins over
-       the UA stylesheet), leaving the "collapsed" list still rendered and
-       silently taking up height even when nothing was expanded. */
-    .np-queue-list:not([hidden]) {
-      display: flex;
-    }
-    .np-queue-list li {
+    .qp-play {
+      flex: 1;
+      min-width: 0;
       display: flex;
       align-items: center;
-      gap: 0.4rem;
-      font-size: 0.75rem;
-      color: var(--text);
-      border-radius: 4px;
+      gap: 0.75rem;
+      padding: 0;
+      border: none;
+      background: transparent;
+      color: inherit;
+      font-family: var(--font-sans);
+      text-align: left;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
     }
-    /* Drag handle for reordering. touch-action: none keeps a finger drag
-       on the handle from scrolling the page or the player sheet. */
+    .qp-play:hover .qp-song { color: var(--accent); }
+    .qp-text {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+    .qp-song {
+      font-size: 0.93rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .qp-album {
+      font-size: 0.78rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .np-queue-list .np-queue-remove,
     .np-queue-list .np-queue-grip {
       flex-shrink: 0;
-      width: 22px;
-      height: 22px;
+      width: 38px;
+      height: 44px;
       padding: 0;
+      border: none;
+      background: transparent;
+      color: var(--muted);
       display: flex;
       align-items: center;
       justify-content: center;
-      background: transparent;
-      border: none;
-      color: var(--muted);
-      cursor: grab;
-      touch-action: none;
       -webkit-tap-highlight-color: transparent;
     }
+    .np-queue-list .np-queue-remove { font-size: 1.15rem; cursor: pointer; }
+    /* touch-action: none keeps a finger drag on the handle from scrolling. */
+    .np-queue-list .np-queue-grip { cursor: grab; touch-action: none; }
+    .np-queue-list .np-queue-remove:hover,
     .np-queue-list .np-queue-grip:hover,
     .np-queue-list .np-queue-grip:focus-visible { color: var(--text); }
     .np-queue-list.reordering li { transition: transform 0.15s ease; }
@@ -645,29 +713,17 @@
       transition: none;
       position: relative;
       z-index: 1;
-      background: var(--card-bg);
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+      background: #26262c;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.55);
       cursor: grabbing;
     }
     .np-queue-list.reordering li.dragging .np-queue-grip { cursor: grabbing; color: var(--accent); }
-    .np-queue-list .np-queue-title {
-      flex: 1;
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-    .np-queue-list .np-queue-remove {
-      background: transparent;
-      border: none;
-      color: var(--muted);
-      cursor: pointer;
-      font-size: 1rem;
-      line-height: 1;
-      padding: 0 0.2rem;
-      flex-shrink: 0;
-    }
-    .np-queue-list .np-queue-remove:hover { color: var(--text); }
+
+    .np-queue-btn { gap: 0.35rem; }
+    .np-queue-btn.active { border-color: var(--accent); color: var(--accent); }
+
+    /* Phone player: the next queued song peeks in a strip at the bottom. */
+    .np-upnext { display: none; }
 
     .np-side-actions {
       display: flex;
@@ -942,11 +998,105 @@
       }
       .now-playing-bar.expanded .np-sleep-options button { min-height: 44px; }
 
-      /* Finger-sized queue rows in the phone sheet. */
-      .now-playing-bar.expanded .np-queue-list { gap: 0; }
-      .now-playing-bar.expanded .np-queue-list li { min-height: 44px; font-size: 0.9rem; }
-      .now-playing-bar.expanded .np-queue-list .np-queue-grip { width: 40px; height: 44px; margin-left: -0.6rem; }
-      .now-playing-bar.expanded .np-queue-list .np-queue-remove { min-width: 44px; min-height: 44px; font-size: 1.2rem; }
+      .now-playing-bar.expanded .np-upnext:not([hidden]) {
+        order: 6;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin: 0 -1.5rem calc(-1.5rem - env(safe-area-inset-bottom, 0px));
+        padding: 0.8rem 1.5rem calc(1rem + env(safe-area-inset-bottom, 0px));
+        border: none;
+        border-top: 1px solid var(--border);
+        background: #17171a;
+        color: var(--text);
+        font-family: var(--font-sans);
+        text-align: left;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .np-upnext-thumb { width: 40px; height: 40px; border-radius: 6px; font-size: 1rem; }
+      .np-upnext-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 0.1rem; }
+      .np-upnext-label {
+        font-family: var(--font-heading);
+        font-size: 0.66rem;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+      .np-upnext-title { font-size: 0.92rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .np-upnext-chevron {
+        flex-shrink: 0;
+        width: 9px;
+        height: 9px;
+        margin: 0.3rem 0.4rem 0;
+        border-left: 2px solid var(--text);
+        border-top: 2px solid var(--text);
+        transform: rotate(45deg);
+      }
+
+      /* The queue as its own sheet over the full player. */
+      .queue-panel {
+        top: 2.25rem;
+        left: 0;
+        right: 0;
+        bottom: 0 !important;
+        z-index: 600;
+        width: auto;
+        max-height: none;
+        padding: 0.6rem 1rem calc(1rem + env(safe-area-inset-bottom, 0px));
+        border: none;
+        border-top: 1px solid var(--accent);
+        border-radius: 18px 18px 0 0;
+        background: #0f0f11;
+        box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.6);
+        animation: np-sheet-in 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+      .qp-header { touch-action: none; padding-bottom: 0.25rem; }
+      .qp-handle {
+        display: block;
+        width: 46px;
+        height: 5px;
+        margin: 0 auto 0.75rem;
+        border-radius: 3px;
+        background: var(--muted);
+        opacity: 0.6;
+      }
+      .qp-now:not([hidden]) {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.4rem;
+        border-radius: 8px;
+        background: rgba(212, 175, 55, 0.08);
+        background: color-mix(in srgb, var(--accent) 8%, transparent);
+      }
+      .qp-now .qp-song { color: var(--accent); }
+      .qp-now-tag { flex-shrink: 0; padding-right: 0.4rem; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; color: var(--accent); }
+      .qp-label {
+        display: block;
+        padding: 0.6rem 0.4rem 0.1rem;
+        font-family: var(--font-heading);
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--accent);
+      }
+      .queue-panel .np-queue-list { flex: 1; }
+      .qp-mini {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-top: auto;
+        padding: 0.55rem 0.6rem;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--card-bg);
+      }
+      .qp-mini-title { flex: 1; min-width: 0; font-size: 0.9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .qp-mini .btn-np { width: 40px; height: 40px; }
+      .qp-mini .btn-np-toggle { width: 44px; height: 44px; }
     }
 
     @keyframes np-sheet-in {
@@ -1151,11 +1301,6 @@
         </div>
         <span class="np-time" id="np-time-dur">00:00</span>
       </div>
-      <div class="np-queue-indicator" id="np-queue-indicator" hidden>
-        <span id="np-queue-count">Up next: 0 queued</span>
-        <button class="np-queue-clear" onclick="clearQueue()">Clear</button>
-      </div>
-      <ul class="np-queue-list" id="np-queue-list" hidden></ul>
     </div>
 
     <div class="np-sleep" id="np-sleep" role="group" aria-label="Sleep timer">
@@ -1176,6 +1321,11 @@
         <span id="np-sleep-btn-label">Sleep</span>
       </button>
 
+      <button class="btn-np-action np-queue-btn desktop-only" id="np-queue-btn" onclick="toggleQueuePanel()" title="Up next" aria-haspopup="true" aria-controls="queue-panel" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="15" y2="6"/><line x1="4" y1="12" x2="15" y2="12"/><line x1="4" y1="18" x2="11" y2="18"/><polyline points="17 15 20 18 17 21"/></svg>
+        <span id="np-queue-btn-label">Queue</span>
+      </button>
+
       <button class="btn-np-action" onclick="jumpToCurrentTrack()" title="Scroll to playing track">View Track</button>
       <button class="btn-np-action" onclick="downloadCurrentTrack()" title="Download MP3">
         <span class="desktop-only">↓ MP3</span>
@@ -1186,7 +1336,46 @@
         <span class="mobile-only"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg></span>
       </button>
     </div>
+    <button type="button" class="np-upnext" id="np-upnext" onclick="openQueuePanel()" hidden>
+      <span class="np-upnext-text">
+        <span class="np-upnext-label" id="np-upnext-label">Up next</span>
+        <span class="np-upnext-title" id="np-upnext-title"></span>
+      </span>
+      <span class="np-upnext-chevron" aria-hidden="true"></span>
+    </button>
   </div>
+
+  <section class="queue-panel" id="queue-panel" aria-label="Up next" hidden>
+    <div class="qp-header" id="qp-header">
+      <div class="qp-handle" aria-hidden="true"></div>
+      <div class="qp-title-row">
+        <div>
+          <h2 class="qp-title">Up next</h2>
+          <span class="qp-count" id="qp-count"></span>
+        </div>
+        <div class="qp-header-actions">
+          <button type="button" class="qp-clear" id="qp-clear" onclick="clearQueue()">Clear</button>
+          <button type="button" class="qp-close" onclick="closeQueuePanel()" aria-label="Close the queue">✕</button>
+        </div>
+      </div>
+    </div>
+    <div class="qp-now" id="qp-now" hidden>
+      <span class="qp-text">
+        <span class="qp-song" id="qp-now-title"></span>
+        <span class="qp-album" id="qp-now-album"></span>
+      </span>
+      <span class="qp-now-tag">PLAYING</span>
+    </div>
+    <div class="qp-label" id="qp-next-label">Next</div>
+    <ul class="np-queue-list" id="np-queue-list"></ul>
+    <p class="qp-empty" id="qp-empty">Nothing queued yet. Tap + on any song to add it here.</p>
+    <div class="qp-mini">
+      <span class="qp-mini-title" id="qp-mini-title"></span>
+      <button class="btn-np" onclick="playPrevTrack()" aria-label="Previous song">⏮</button>
+      <button class="btn-np-toggle" id="qp-toggle" onclick="toggleNowPlaying()" aria-label="Play or pause">⏸</button>
+      <button class="btn-np" onclick="playNextTrack()" aria-label="Next song">⏭</button>
+    </div>
+  </section>
 
   <!-- MONTHLY CALENDAR MODAL -->
   <div class="modal" id="calendar-modal">
@@ -1229,7 +1418,6 @@
     let visibleOrder = [];
     let currentTrackIndex = -1;
     let trackQueue = [];
-    const QUEUE_LIST_VISIBLE_MAX = 3;
     let currentSort = 'day';
     let sortAsc = false;
     let activeGenre = 'All';
@@ -1458,6 +1646,7 @@
       const bar = document.getElementById('now-playing-bar');
       const backdrop = document.getElementById('np-backdrop');
       if (!bar.classList.contains('expanded')) return;
+      closeQueuePanel();
       const finish = () => {
         bar.classList.remove('expanded');
         backdrop.classList.remove('active');
@@ -1481,7 +1670,6 @@
     function setupSheetGestures() {
       const bar = document.getElementById('now-playing-bar');
       const backdrop = document.getElementById('np-backdrop');
-      const queueList = document.getElementById('np-queue-list');
       let drag = null;
 
       bar.addEventListener('touchstart', (e) => {
@@ -1492,10 +1680,10 @@
           startY: touch.clientY,
           startTime: Date.now(),
           expanded: bar.classList.contains('expanded'),
-          // A scrolled queue list scrolls back up before the sheet moves.
-          atTop: bar.scrollTop <= 0 && !(e.target.closest('.np-queue-list') && queueList.scrollTop > 0),
-          // The seek bar and queue handles have drags of their own.
-          ownGesture: !!e.target.closest('.np-progress-bg, .np-queue-grip'),
+          atTop: bar.scrollTop <= 0,
+          onUpNext: !!e.target.closest('#np-upnext'),
+          // The seek bar has a drag of its own.
+          ownGesture: !!e.target.closest('.np-progress-bg'),
           active: false,
           dy: 0
         };
@@ -1511,6 +1699,12 @@
           if (!drag.expanded && dy < 0) {
             drag = null;
             openExpandedPlayer();
+            return;
+          }
+          // Swiping up on the Up next strip pulls up the queue.
+          if (drag.expanded && dy < 0 && drag.onUpNext) {
+            drag = null;
+            openQueuePanel();
             return;
           }
           // Only pull the sheet down when its content is scrolled to the top;
@@ -1570,6 +1764,7 @@
     }
 
     function toggleSleepMenu() {
+      closeQueuePanel();
       document.getElementById('np-sleep').classList.toggle('open');
     }
 
@@ -2095,6 +2290,7 @@
       // the queue whether it got here via the queue itself or was played
       // directly (e.g. its own Play button) while still queued.
       if (trackQueue.includes(index)) toggleQueueTrack(index);
+      updateQueueNowPlaying(index);
 
       audio.src = track.url;
       document.getElementById('np-title').textContent = `${track.day > 0 ? 'Day ' + track.day + ' - ' : ''}${track.title}`;
@@ -2180,48 +2376,177 @@
       updateQueueIndicator();
     }
 
+    // A queued song's second line: its day and date.
+    function beatSubtitle(song) {
+      return [song.day > 0 ? `Day ${song.day}` : '', formatBeatDate(song.date)].filter(Boolean).join(' · ');
+    }
+
     function updateQueueIndicator() {
-      const indicator = document.getElementById('np-queue-indicator');
-      const count = document.getElementById('np-queue-count');
       const list = document.getElementById('np-queue-list');
-      if (!indicator || !count || !list) return;
+      if (!list) return;
+      const n = trackQueue.length;
+      const countText = `${n} ${n === 1 ? 'song' : 'songs'}`;
 
-      const hasQueue = trackQueue.length > 0;
-      indicator.hidden = !hasQueue;
-      list.hidden = !hasQueue;
-      count.textContent = `Up next: ${trackQueue.length} queued`;
+      document.getElementById('qp-count').textContent = n ? countText : '';
+      document.getElementById('qp-clear').hidden = n === 0;
+      document.getElementById('qp-empty').hidden = n > 0;
+      document.getElementById('qp-next-label').hidden = n === 0;
+      document.getElementById('np-queue-btn-label').textContent = n ? `Queue ${n}` : 'Queue';
 
-      // Show at most the first few -- growing the sheet to fit an unbounded
-      // queue (or scrolling inside it) isn't worth the complexity for what's
-      // meant to be a simple queue, not a full playlist view.
-      list.replaceChildren(...trackQueue.slice(0, QUEUE_LIST_VISIBLE_MAX).map((idx) => {
-        const title = songs[idx].title;
+      // Phone player: the next queued song peeks at the bottom.
+      document.getElementById('np-upnext').hidden = n === 0;
+      if (n) {
+        document.getElementById('np-upnext-label').textContent = `Up next · ${countText}`;
+        document.getElementById('np-upnext-title').textContent = songs[trackQueue[0]].title;
+      }
+
+      list.replaceChildren(...trackQueue.map((idx) => {
+        const song = songs[idx];
         const li = document.createElement('li');
 
         const grip = document.createElement('button');
         grip.type = 'button';
         grip.className = 'np-queue-grip';
         grip.title = 'Drag to reorder';
-        grip.setAttribute('aria-label', `Move ${title}. Drag, or use the up and down arrow keys.`);
-        grip.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/></svg>';
+        grip.setAttribute('aria-label', `Move ${song.title}. Drag, or use the up and down arrow keys.`);
+        grip.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><circle cx="9" cy="6" r="1.7"/><circle cx="15" cy="6" r="1.7"/><circle cx="9" cy="12" r="1.7"/><circle cx="15" cy="12" r="1.7"/><circle cx="9" cy="18" r="1.7"/><circle cx="15" cy="18" r="1.7"/></svg>';
 
-        const titleEl = document.createElement('span');
-        titleEl.className = 'np-queue-title';
-        titleEl.textContent = title;
+        // Tapping the song plays it; the queue then carries on from there.
+        const play = document.createElement('button');
+        play.type = 'button';
+        play.className = 'qp-play';
+        play.setAttribute('aria-label', `Play ${song.title} now`);
+        const text = document.createElement('span');
+        text.className = 'qp-text';
+        const title = document.createElement('span');
+        title.className = 'qp-song';
+        title.textContent = song.title;
+        const sub = document.createElement('span');
+        sub.className = 'qp-album';
+        sub.textContent = beatSubtitle(song);
+        text.append(title, sub);
+        play.append(text);
+        play.addEventListener('click', () => playFromQueue(idx));
 
         const remove = document.createElement('button');
         remove.type = 'button';
         remove.className = 'np-queue-remove';
         remove.title = 'Remove from queue';
-        remove.setAttribute('aria-label', `Remove ${title} from the queue`);
+        remove.setAttribute('aria-label', `Remove ${song.title} from the queue`);
         remove.textContent = '×';
         remove.addEventListener('click', () => toggleQueueTrack(idx));
 
-        li.append(grip, titleEl, remove);
+        li.append(grip, play, remove);
         return li;
       }));
 
       updatePackBarPosition();
+    }
+
+    // The song playing now, shown at the top of the phone queue sheet and
+    // in its mini player.
+    function updateQueueNowPlaying(index) {
+      const song = songs[index];
+      const now = document.getElementById('qp-now');
+      now.hidden = !song;
+      if (!song) return;
+      document.getElementById('qp-now-title').textContent = song.title;
+      document.getElementById('qp-now-album').textContent = beatSubtitle(song);
+      document.getElementById('qp-mini-title').textContent = song.title;
+    }
+
+    function openQueuePanel() {
+      const panel = document.getElementById('queue-panel');
+      document.getElementById('np-sleep').classList.remove('open');
+      panel.style.transition = '';
+      panel.style.transform = '';
+      // Desktop: sit just above the player bar, whatever its height.
+      panel.style.bottom = isPhoneLayout() ? '' : `${document.getElementById('now-playing-bar').offsetHeight + 8}px`;
+      panel.hidden = false;
+      document.getElementById('np-queue-btn').classList.add('active');
+      document.getElementById('np-queue-btn').setAttribute('aria-expanded', 'true');
+    }
+
+    // On phones the sheet slides down before it's hidden.
+    function closeQueuePanel() {
+      const panel = document.getElementById('queue-panel');
+      if (panel.hidden) return;
+      document.getElementById('np-queue-btn').classList.remove('active');
+      document.getElementById('np-queue-btn').setAttribute('aria-expanded', 'false');
+      const finish = () => {
+        panel.hidden = true;
+        panel.style.transition = '';
+        panel.style.transform = '';
+      };
+      if (!isPhoneLayout()) {
+        finish();
+        return;
+      }
+      panel.style.transition = `transform ${SHEET_CLOSE_MS}ms ease-in`;
+      panel.style.transform = 'translateY(100%)';
+      setTimeout(finish, SHEET_CLOSE_MS);
+    }
+
+    function toggleQueuePanel() {
+      if (document.getElementById('queue-panel').hidden) {
+        openQueuePanel();
+      } else {
+        closeQueuePanel();
+      }
+    }
+
+    // Clicking elsewhere closes the desktop panel, except a song's + button,
+    // so songs can be added with the panel open.
+    document.addEventListener('click', (e) => {
+      const panel = document.getElementById('queue-panel');
+      if (panel.hidden) return;
+      const path = e.composedPath();
+      if (path.includes(panel)) return;
+      if (e.target.closest('#np-queue-btn, #np-upnext, .btn-queue')) return;
+      closeQueuePanel();
+    });
+
+    // Phone queue sheet: drag its header down to close it.
+    function setupQueueSheetGestures() {
+      const panel = document.getElementById('queue-panel');
+      const header = document.getElementById('qp-header');
+      let drag = null;
+      header.addEventListener('touchstart', (e) => {
+        if (!isPhoneLayout() || e.touches.length !== 1 || e.target.closest('button')) return;
+        drag = { startY: e.touches[0].clientY, startTime: Date.now(), dy: 0 };
+        panel.style.transition = 'none';
+      }, { passive: true });
+      header.addEventListener('touchmove', (e) => {
+        if (!drag) return;
+        e.preventDefault();
+        drag.dy = Math.max(0, e.touches[0].clientY - drag.startY);
+        panel.style.transform = `translateY(${drag.dy}px)`;
+      }, { passive: false });
+      const end = () => {
+        if (!drag) return;
+        const speed = drag.dy / Math.max(1, Date.now() - drag.startTime);
+        if (drag.dy > panel.offsetHeight * 0.25 || speed > 0.6) {
+          closeQueuePanel();
+        } else {
+          panel.style.transition = 'transform 0.2s ease-out';
+          panel.style.transform = '';
+        }
+        drag = null;
+      };
+      header.addEventListener('touchend', end);
+      header.addEventListener('touchcancel', end);
+      header.addEventListener('click', (e) => {
+        if (isPhoneLayout() && !e.target.closest('button')) closeQueuePanel();
+      });
+    }
+
+    // Play a queued song now. Songs queued ahead of it are skipped (taken off
+    // the queue), so the queue continues from that song.
+    function playFromQueue(idx) {
+      const pos = trackQueue.indexOf(idx);
+      if (pos === -1) return;
+      trackQueue.slice(0, pos).forEach(skipped => toggleQueueTrack(skipped));
+      playTrackByIndex(idx);
     }
 
     function moveQueueItem(from, to) {
@@ -2291,7 +2616,6 @@
         e.preventDefault();
         const from = [...list.children].indexOf(grip.closest('li'));
         const to = from + (e.key === 'ArrowUp' ? -1 : 1);
-        // Only the first few queued songs are listed, so stay among those.
         if (to < 0 || to >= list.children.length) return;
         moveQueueItem(from, to);
         list.children[to].querySelector('.np-queue-grip').focus();
@@ -2399,10 +2723,12 @@
 
     audio.addEventListener('play', () => {
       document.getElementById('btn-np-toggle').textContent = "⏸";
+      document.getElementById('qp-toggle').textContent = "⏸";
     });
 
     audio.addEventListener('pause', () => {
       document.getElementById('btn-np-toggle').textContent = "▶";
+      document.getElementById('qp-toggle').textContent = "▶";
     });
 
     audio.addEventListener('timeupdate', () => {
@@ -2430,6 +2756,8 @@
 
     setupSheetGestures();
     setupQueueDrag();
+    setupQueueSheetGestures();
+    updateQueueIndicator();
     loadCatalog();
   </script>
   <script>
