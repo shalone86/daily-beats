@@ -1,11 +1,13 @@
-const CACHE_NAME = 'beats-pwa-v1';
+const CACHE_NAME = 'beats-pwa-v2';
 
 // Core assets required for the app shell to load offline
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/site.webmanifest',
-  '/favicon.svg'
+  '/favicon.svg',
+  '/fonts/jetbrains-mono.woff2',
+  '/vendor/jszip-3.10.1.min.js'
 ];
 
 // 1. Install Event: Pre-cache the core assets

@@ -34,19 +34,20 @@
   }
   </script>
 
-  <!-- Google Fonts for Liturgical / Classical Serif Typography -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
-
-  <!-- JSZip for Custom Playlist Downloads -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-  <!-- Google Font: JetBrains Mono -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <!-- Everything the page needs is served from this site: no third-party
+       scripts or fonts. JSZip (custom playlist downloads) is pinned to
+       3.10.1; the font is the Latin JetBrains Mono, weights 500-700. -->
+  <link rel="preload" href="/fonts/jetbrains-mono.woff2" as="font" type="font/woff2" crossorigin>
+  <script src="/vendor/jszip-3.10.1.min.js" defer></script>
 
   <style>
+    @font-face {
+      font-family: 'JetBrains Mono';
+      font-style: normal;
+      font-weight: 500 700;
+      font-display: swap;
+      src: url('/fonts/jetbrains-mono.woff2') format('woff2');
+    }
     :root {
       color-scheme: dark;
       --bg: #121214;
@@ -1848,6 +1849,12 @@
       return target > new Date('2025-10-16') ? diffDays - 2 : diffDays;
     }
 
+    // One malformed catalog entry shouldn't blank the page: it is skipped and
+    // noted in the browser console, and the rest of the catalog still shows.
+    function skipBadEntry(kind, entry, err) {
+      console.warn(`Skipped a ${kind} in the catalog:`, err && err.message ? err.message : err, entry);
+    }
+
     async function loadCatalog() {
       try {
         const res = await fetch(`${CATALOG_URL}?v=${Date.now()}`);
@@ -1859,8 +1866,10 @@
         if (Array.isArray(catalogData)) {
           if (catalogData.length > 0 && catalogData[0].tracks) {
             catalogData.forEach(album => {
-              if (album.tracks && album.tracks.length > 0) {
+              if (album && Array.isArray(album.tracks)) {
                 rawTracks.push(...album.tracks);
+              } else if (album && album.tracks) {
+                skipBadEntry('album', album, 'its song list is not a list');
               }
             });
           } else {
@@ -1869,24 +1878,34 @@
         }
 
         rawTracks.forEach(t => {
-          const bpmVal = t.bpm || "";
-          const rawTextSource = t.description || t.desc || t.notes || t.text || "";
+          try {
+          const filePath = t && (t.path || t.file);
+          if (typeof filePath !== 'string' || !filePath.trim() || (t.title != null && typeof t.title !== 'string')) {
+            return skipBadEntry('song', t, 'missing a file path or has a bad title');
+          }
+          // Every field the page filters or searches on is kept as text.
+          const text = (v) => (v == null ? "" : String(v));
+          const bpmVal = text(t.bpm);
+          const rawTextSource = text(t.description || t.desc || t.notes || t.text);
 
-          const parsed = parseTrackText(rawTextSource, t.chords, t.lyrics);
+          const parsed = parseTrackText(rawTextSource, t.chords == null ? t.chords : text(t.chords), t.lyrics == null ? t.lyrics : text(t.lyrics));
 
           songs.push({
             title: t.title || "Untitled Beat",
             day: parseInt(t.day, 10) || 0,
-            date: t.date || "",
+            date: text(t.date),
             bpm: bpmVal,
             bpmCategory: getBpmCategory(bpmVal),
-            key: t.key || "",
+            key: text(t.key),
             chords: parsed.chords,
             lyrics: parsed.lyrics,
             description: parsed.description,
-            genre: t.genre || "",
-            url: t.path ? `${MEDIA_BASE}/${encodeURI(t.path)}` : `${MEDIA_BASE}/${encodeURI(t.file)}`
+            genre: text(t.genre),
+            url: `${MEDIA_BASE}/${encodeURI(filePath)}`
           });
+          } catch (err) {
+            skipBadEntry('song', t, err);
+          }
         });
 
         updateProgress();
