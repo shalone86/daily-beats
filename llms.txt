@@ -8,7 +8,7 @@ The website (https://shalonely.com) builds its track list with JavaScript, so th
 
 - [catalog.json](https://daily.shalonely.com/catalog.json): a JSON list holding one album whose `tracks` are every beat.
 
-Each track has `title`, `path` (the MP3), `day` (its day number in the challenge), `date` (YYYY-MM-DD), `genre` (Electronic, Pop, Hip-Hop or Lofi), and, when known, `bpm`, `key`, `chords`, `lyrics` and `description`.
+Each track has `title`, `path` (the MP3), `day` (its day number in the challenge), `date` (YYYY-MM-DD), `genre` (Electronic, Pop, Hip-Hop or Lofi), `vocals` ("Vocal", "Instrumental", or empty when not yet marked), and, when known, `bpm`, `key`, `chords`, `lyrics` and `description`.
 
 All paths are relative to https://daily.shalonely.com/ and should be URL-encoded. There are no album ZIPs; download tracks one by one.
 
