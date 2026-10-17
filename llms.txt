@@ -1,0 +1,43 @@
+# Shalone's Daily Beats
+
+> A beat a day: electronic, pop, hip-hop and lofi instrumentals and songs from a daily music challenge. Every track is released under CC0 1.0 (public domain). You may download, copy, remix and redistribute everything, for any purpose, with no attribution required.
+
+The website (https://shalonely.com) builds its track list with JavaScript, so the raw HTML has few links. Use the catalog file below instead. Everything is served from https://daily.shalonely.com/.
+
+## Catalog
+
+- [catalog.json](https://daily.shalonely.com/catalog.json): a JSON list holding one album whose `tracks` are every beat.
+
+Each track has `title`, `path` (the MP3), `day` (its day number in the challenge), `date` (YYYY-MM-DD), `genre` (Electronic, Pop, Hip-Hop or Lofi), `vocals` ("Vocal", "Instrumental", or empty when not yet marked), and, when known, `bpm`, `key`, `chords`, `lyrics` and `description`.
+
+All paths are relative to https://daily.shalonely.com/ and should be URL-encoded. There are no album ZIPs; download tracks one by one.
+
+## Downloading
+
+- Every track: fetch each track's `path`.
+- New releases: the podcast feed lists every track as a dated MP3 enclosure: [podcast.xml](https://daily.shalonely.com/podcast.xml).
+
+Example (Python), downloading every Lofi track:
+
+```python
+import json, urllib.parse, urllib.request
+BASE = "https://daily.shalonely.com/"
+HEADERS = {"User-Agent": "my-downloader/1.0"}
+def get(path):
+    req = urllib.request.Request(BASE + urllib.parse.quote(path), headers=HEADERS)
+    return urllib.request.urlopen(req).read()
+for track in json.loads(get("catalog.json"))[0]["tracks"]:
+    if track.get("genre") == "Lofi":
+        open(track["path"].split("/")[-1], "wb").write(get(track["path"]))
+```
+
+Please send a descriptive User-Agent and download at a modest pace.
+
+## Related sites
+
+- [Cyril & Methodius Media](https://methodius.media/llms.txt): Catholic lofi, pop and ambient settings of prayers.
+- [Catholic Lofi](https://catholiclofi.com/llms.txt): Catholic lofi albums.
+
+## Contact
+
+hello@shalonely.com
