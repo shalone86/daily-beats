@@ -184,20 +184,6 @@
       font-weight: 600;
       color: var(--text);
     }
-    .progress-bar-bg {
-      background: rgba(212, 175, 55, 0.15);
-      border-radius: 6px;
-      height: 14px;
-      overflow: hidden;
-      margin-top: 0.6rem;
-      border: 1px solid var(--border);
-    }
-    .progress-fill { 
-      background: var(--accent); 
-      height: 100%; 
-      width: 0%; 
-      transition: width 0.4s ease; 
-    }
 
     .btn-calendar {
       margin-top: 0.85rem;
@@ -1234,10 +1220,7 @@
     </header>
 
     <div class="progress-card">
-      <div class="progress-title">Daily Challenge Progress: <span id="completed-count">0</span> / 365 Days</div>
-      <div class="progress-bar-bg">
-        <div class="progress-fill" id="progress-fill"></div>
-      </div>
+      <div class="progress-title">Progress: <span id="completed-count">0</span> / 365 Days</div>
       <button class="btn-calendar" onclick="toggleCalendarModal(true)">View Monthly Calendar</button>
     </div>
 
@@ -1951,8 +1934,6 @@
       const highestDay = validDays.length > 0 ? Math.max(...validDays) : 0;
 
       document.getElementById('completed-count').textContent = highestDay;
-      const pct = Math.min(Math.round((highestDay / 365) * 100), 100);
-      document.getElementById('progress-fill').style.width = pct + '%';
     }
 
     function setGenreFilter(genre, btn) {
