@@ -109,6 +109,18 @@
       transition: color 0.2s;
     }
     .sticky-nav a:hover { color: var(--accent); }
+    /* Phones: two tidy rows of three links, close together. */
+    @media (max-width: 640px) {
+      .sticky-nav {
+        display: grid;
+        grid-template-columns: repeat(3, auto);
+        justify-content: center;
+        column-gap: 2rem;
+        row-gap: 0.3rem;
+        padding: 0.55rem 1rem;
+      }
+      .sticky-nav a { text-align: center; }
+    }
 
     .container {
       max-width: 850px;
