@@ -35,6 +35,7 @@ Please send a descriptive User-Agent and download at a modest pace.
 
 ## Related sites
 
+- [Shalone Cason · Albums](https://albums.shalonely.com/llms.txt): Shalone's personal albums, also CC0.
 - [Cyril & Methodius Media](https://methodius.media/llms.txt): Catholic lofi, pop and ambient settings of prayers.
 - [Catholic Lofi](https://catholiclofi.com/llms.txt): Catholic lofi albums.
 
