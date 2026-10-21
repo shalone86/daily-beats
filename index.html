@@ -1390,7 +1390,7 @@
   <div class="modal" id="calendar-modal">
     <div class="modal-content">
       <h3 style="color: var(--accent); font-family: var(--font-heading);">Daily Challenge Calendar</h3>
-      <p style="font-size: 0.85rem; color: var(--muted); margin-top: 0.25rem;">October 11, 2025 – October 2026</p>
+      <p style="font-size: 0.85rem; color: var(--muted); margin-top: 0.25rem;">Since October 11, 2025</p>
       <div class="calendar-container" id="calendar-container"></div>
       <button class="btn-modal-close" onclick="toggleCalendarModal(false)">Close</button>
     </div>
@@ -1403,21 +1403,32 @@
     const START_DATE = new Date('2025-10-11');
     const SKIPPED_DATES = new Set(['2025-10-15', '2025-10-16']);
 
-    const MONTHS = [
-      { year: 2025, month: 9, name: "October 2025" },
-      { year: 2025, month: 10, name: "November 2025" },
-      { year: 2025, month: 11, name: "December 2025" },
-      { year: 2026, month: 0, name: "January 2026" },
-      { year: 2026, month: 1, name: "February 2026" },
-      { year: 2026, month: 2, name: "March 2026" },
-      { year: 2026, month: 3, name: "April 2026" },
-      { year: 2026, month: 4, name: "May 2026" },
-      { year: 2026, month: 5, name: "June 2026" },
-      { year: 2026, month: 6, name: "July 2026" },
-      { year: 2026, month: 7, name: "August 2026" },
-      { year: 2026, month: 8, name: "September 2026" },
-      { year: 2026, month: 9, name: "October 2026" }
-    ];
+    // The calendar shows every month from the earliest song (or the start of
+    // the challenge) up to this month (or the newest song's month, if later).
+    const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    function calendarMonths() {
+      const newest = songs.reduce((max, s) => (s.date > max ? s.date : max), '');
+      const today = new Date();
+      let endYear = today.getFullYear();
+      let endMonth = today.getMonth();
+      const m = /^(\d{4})-(\d{2})/.exec(newest);
+      if (m && (+m[1] > endYear || (+m[1] === endYear && +m[2] - 1 > endMonth))) {
+        endYear = +m[1];
+        endMonth = +m[2] - 1;
+      }
+      const months = [];
+      // Count months as year * 12 + month so the loop rolls over years.
+      const end = endYear * 12 + endMonth;
+      let start = START_DATE.getUTCFullYear() * 12 + START_DATE.getUTCMonth();
+      const oldest = songs.reduce((min, s) => (s.date && (!min || s.date < min) ? s.date : min), '');
+      const o = /^(\d{4})-(\d{2})/.exec(oldest);
+      if (o) start = Math.min(start, +o[1] * 12 + +o[2] - 1);
+      for (let i = start; i <= end; i++) {
+        const year = Math.floor(i / 12), month = i % 12;
+        months.push({ year, month, name: `${MONTH_NAMES[month]} ${year}` });
+      }
+      return months;
+    }
 
     let songs = [];
     let selectedTracks = [];
@@ -2284,10 +2295,12 @@
       const container = document.getElementById('calendar-container');
       container.innerHTML = '';
 
-      const dayMap = {};
-      songs.forEach(s => { if (s.day > 0) dayMap[s.day] = s; });
+      // Songs by date; a day can have more than one (say a vocal and an
+      // instrumental version), in catalog order.
+      const byDate = {};
+      songs.forEach(s => { if (s.date) (byDate[s.date] = byDate[s.date] || []).push(s); });
 
-      MONTHS.forEach(({ year, month, name }) => {
+      calendarMonths().forEach(({ year, month, name }) => {
         const block = document.createElement('div');
         block.className = 'month-block';
 
@@ -2315,15 +2328,16 @@
             dayCell.title = "Missed Day";
           } else {
             const dayNum = getDayNumberForDate(year, month, d);
-            if (dayNum && dayMap[dayNum]) {
+            const daySongs = byDate[dateStr];
+            if (daySongs) {
+              const first = daySongs[0];
               dayCell.classList.add('completed');
               dayCell.textContent = d;
-              dayCell.title = `Day ${dayNum}: ${dayMap[dayNum].title}`;
+              dayCell.title = `${first.day > 0 ? `Day ${first.day}: ` : ''}${daySongs.map(s => s.title).join(' · ')}`;
               dayCell.onclick = () => {
                 toggleCalendarModal(false);
-                const idx = songs.indexOf(dayMap[dayNum]);
-                playFromList(idx);
-                jumpToTrackByDay(dayNum);
+                playFromList(songs.indexOf(first));
+                jumpToTrack(first);
               };
             } else if (dayNum) {
               dayCell.textContent = d;
@@ -2383,8 +2397,9 @@
       updatePackBarPosition();
     }
 
-    function jumpToTrackByDay(dayNum) {
-      const song = songs.find(s => s.day === dayNum);
+    // Scroll to a song's card. Days can hold more than one song, so this
+    // goes by the song itself rather than its day.
+    function jumpToTrack(song) {
       if (!song) return;
       const targetEl = document.getElementById(`track-${slugify(song.title)}`);
       if (targetEl) {
@@ -2401,10 +2416,7 @@
     function jumpToCurrentTrack() {
       if (currentTrackIndex === -1) return;
       closeExpandedPlayer();
-      const track = songs[currentTrackIndex];
-      if (track && track.day > 0) {
-        jumpToTrackByDay(track.day);
-      }
+      jumpToTrack(songs[currentTrackIndex]);
     }
 
     function downloadCurrentTrack() {
