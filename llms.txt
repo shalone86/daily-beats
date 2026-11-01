@@ -4,6 +4,10 @@
 
 The website (https://shalonely.com) builds its track list with JavaScript, so the raw HTML has few links. Use the catalog file below instead. Everything is served from https://daily.shalonely.com/.
 
+## Pages
+
+- Every beat has its own page at https://shalonely.com/beat/<day>-<title> (with genre, tempo, key, notes, chords and lyrics when known), all listed in [sitemap.xml](https://shalonely.com/sitemap.xml).
+
 ## Catalog
 
 - [catalog.json](https://daily.shalonely.com/catalog.json): a JSON list holding one album whose `tracks` are every beat.
