@@ -1,4 +1,4 @@
-const CACHE_NAME = 'beats-pwa-v2';
+const CACHE_NAME = 'beats-pwa-v3';
 
 // Core assets required for the app shell to load offline
 const ASSETS_TO_CACHE = [

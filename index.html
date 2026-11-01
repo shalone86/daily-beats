@@ -2197,7 +2197,7 @@
       if (!track) return;
       
       const trackSlug = slugify(track.title);
-      const shareUrl = `${window.location.origin}${window.location.pathname}#track-${trackSlug}`;
+      const shareUrl = `${window.location.origin}/listen/track-${trackSlug}`; // previews show the beat, then open it here
       history.pushState(null, null, `#track-${trackSlug}`);
 
       navigator.clipboard.writeText(shareUrl).then(() => {
@@ -2223,7 +2223,7 @@
 
     function shareTrackLink(trackSlug, btn) {
       if (!trackSlug) return;
-      const shareUrl = `${window.location.origin}${window.location.pathname}#track-${trackSlug}`;
+      const shareUrl = `${window.location.origin}/listen/track-${trackSlug}`; // previews show the beat, then open it here
       history.pushState(null, null, `#track-${trackSlug}`);
       
       navigator.clipboard.writeText(shareUrl).then(() => {
