@@ -1447,6 +1447,48 @@
 
     const audio = new Audio();
 
+    // KEEP-ALIVE FOR LOCKED PHONES
+    // Some phones (Samsung especially) freeze the browser the instant a song
+    // ends with the screen locked, before the next song can start. A second
+    // player loops ten seconds of silence for as long as music should be
+    // playing, so the phone never sees a gap between songs. It stops when
+    // the listener pauses, at a sleep-timer end, or if no song starts within
+    // 30 seconds.
+    const keepAlive = new Audio('/silence.wav');
+    keepAlive.loop = true;
+    keepAlive.preload = 'none';
+    let gapStartedAt = 0;
+    const musicPlaying = () => !audio.paused && !audio.ended;
+    function startKeepAlive() {
+      gapStartedAt = 0;
+      if (keepAlive.paused) keepAlive.play().catch(() => {});
+    }
+    function stopKeepAlive() {
+      gapStartedAt = 0;
+      keepAlive.pause();
+    }
+    keepAlive.addEventListener('timeupdate', () => {
+      if (musicPlaying()) { gapStartedAt = 0; return; }
+      if (!gapStartedAt) gapStartedAt = Date.now();
+      else if (Date.now() - gapStartedAt > 30000) stopKeepAlive();
+    });
+    // Tell the lock screen where the song is (with the silent keep-alive
+    // also playing, the phone can't work it out on its own).
+    function reportPosition(el) {
+      const dur = el.duration;
+      if (!('mediaSession' in navigator) || !navigator.mediaSession.setPositionState || !(dur > 0) || !isFinite(dur)) return;
+      try { navigator.mediaSession.setPositionState({ duration: dur, position: Math.min(el.currentTime, dur), playbackRate: el.playbackRate || 1 }); } catch (e) { /* ignore */ }
+    }
+    // A song that was meant to start while the phone was locked but never
+    // loaded: start it again on return instead of leaving it frozen.
+    document.addEventListener('visibilitychange', () => {
+      const el = audio;
+      if (!document.hidden && el && !el.paused && el.currentTime === 0 && el.readyState < 2) {
+        el.load();
+        el.play().catch(() => {});
+      }
+    });
+
     function slugify(text) {
       return text.toString().toLowerCase().trim()
         .replace(/\s+/g, '-')
@@ -2393,6 +2435,7 @@
         navigator.mediaSession.setActionHandler('nexttrack', playNextTrack);
       }
 
+      startKeepAlive();
       audio.play();
       updatePackBarPosition();
     }
@@ -2803,11 +2846,13 @@
     }
 
     audio.addEventListener('play', () => {
+      startKeepAlive();
       document.getElementById('btn-np-toggle').textContent = "⏸";
       document.getElementById('qp-toggle').textContent = "⏸";
     });
 
     audio.addEventListener('pause', () => {
+      stopKeepAlive();
       document.getElementById('btn-np-toggle').textContent = "▶";
       document.getElementById('qp-toggle').textContent = "▶";
     });
@@ -2821,17 +2866,20 @@
         
         const pct = dur > 0 ? (curr / dur) * 100 : 0;
         document.getElementById('np-progress-fill').style.width = `${pct}%`;
+        reportPosition(audio);
       }
     });
 
     audio.addEventListener('ended', () => {
       // "Stop after this song", or the timer ran out while fading.
       if (sleepTimer.mode === 'end' || sleepTimer.fading) {
+        stopKeepAlive();
         setSleepTimer('off');
         return;
       }
       playNextTrack();
     });
+    audio.addEventListener('error', stopKeepAlive);
 
     window.addEventListener('hashchange', handleDeepLink);
 
