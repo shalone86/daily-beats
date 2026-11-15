@@ -1,7 +1,7 @@
 // A real page for every daily beat, built from catalog.json, so search
 // engines (and people following a link) can find each one on its own:
 //   /beat/<day>-<title>     one beat: player, details, chords, lyrics, notes
-//   /sitemap.xml            the home page plus every beat page
+//   /sitemap.xml            the home page, the apps page and every beat page
 // Everything else is the static site in this folder, served by Cloudflare
 // before this code runs. The home page is unchanged.
 
@@ -50,7 +50,7 @@ const SITE = {
     }
     return songs;
   },
-  sitemap: (songs) => ['/', ...songs.map(beatPath)],
+  sitemap: (songs) => ['/', '/apps', ...songs.map(beatPath)],
   handles: (parts) => parts[0] === 'beat' && parts.length === 2,
   shareItems: (songs) => songs.map((s) => ({
     ids: [s.day ? `day-${s.day}` : '', `track-${slugify(s.title)}`].filter(Boolean),

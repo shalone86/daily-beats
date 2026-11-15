@@ -124,13 +124,13 @@
       transition: color 0.2s;
     }
     .sticky-nav a:hover { color: var(--accent); }
-    /* Phones: two tidy rows of three links, close together. */
+    /* Phones: two tidy rows (four links, then three), close together. */
     @media (max-width: 640px) {
       .sticky-nav {
         display: grid;
-        grid-template-columns: repeat(3, auto);
+        grid-template-columns: repeat(4, auto);
         justify-content: center;
-        column-gap: 2rem;
+        column-gap: 1.25rem;
         row-gap: 0.3rem;
         padding: 0.55rem 1rem;
       }
@@ -1247,6 +1247,7 @@
   <nav class="sticky-nav">
     <a href="#" onclick="goHome(); return false;">Home</a>
     <a href="https://albums.shalonely.com">Albums</a>
+    <a href="/apps">Apps</a>
     <a href="#" onclick="triggerShuffle(event); return false;">Shuffle</a>
     <a href="mailto:hello@shalonely.com">Contact</a>
     <a href="https://donate.stripe.com/bJe9ATgAFgOjaCq1TlcV200" target="_blank" rel="noopener" style="color: var(--accent);">Support</a>
