@@ -2258,7 +2258,7 @@
           ${lyricsHtml}
           ${song.description ? `<div class="track-desc">${song.description}</div>` : ''}
           <div class="track-actions">
-            <button class="play-btn" onclick="playFromList(${globalIdx})">▶ Play</button>
+            <button class="play-btn" data-idx="${globalIdx}" onclick="togglePlayFromList(${globalIdx})">${globalIdx === currentTrackIndex && !audio.paused ? '⏸ Pause' : '▶ Play'}</button>
             <button class="btn-queue${queuedClass}" onclick="toggleQueueTrack(${globalIdx})" title="Add to queue">
               <span class="desktop-only">+ Queue</span>
               <span class="mobile-only">+</span>
@@ -2810,6 +2810,23 @@
       playTrackByIndex(index);
     }
 
+    // A beat's own button: plays it, or pauses/resumes it if it's the one playing.
+    function togglePlayFromList(index) {
+      if (index === currentTrackIndex && audio.src) {
+        if (audio.paused) audio.play(); else audio.pause();
+        return;
+      }
+      playFromList(index);
+    }
+
+    // Shows "Pause" on the playing beat's button and "Play" on every other.
+    function syncPlayButtons() {
+      document.querySelectorAll('.play-btn[data-idx]').forEach((btn) => {
+        const playing = Number(btn.dataset.idx) === currentTrackIndex && !audio.paused;
+        btn.textContent = playing ? '⏸ Pause' : '▶ Play';
+      });
+    }
+
     // The song one step down (1) or up (-1) the list as shown, wrapping
     // around at the ends. If the playing song isn't in the list (say, the
     // filter changed since it started), start from the top of the list.
@@ -2895,12 +2912,14 @@
 
     audio.addEventListener('play', () => {
       startKeepAlive();
+      syncPlayButtons();
       document.getElementById('btn-np-toggle').textContent = "⏸";
       document.getElementById('qp-toggle').textContent = "⏸";
     });
 
     audio.addEventListener('pause', () => {
       stopKeepAlive();
+      syncPlayButtons();
       document.getElementById('btn-np-toggle').textContent = "▶";
       document.getElementById('qp-toggle').textContent = "▶";
     });
