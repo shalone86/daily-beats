@@ -21,7 +21,7 @@ const SITE = {
   name: "Shalone's Daily Beats",
   artist: 'Shalone Cason',
   homeLabel: "Shalone's Daily Beats · All beats",
-  footer: "Shalone's Daily Beats · CC0 Public Domain · Free to hear, download and reuse",
+  footer: "Shalone's Daily Beats · CC0 Public Domain except where noted · Free to hear, download and reuse",
   image: 'https://shalonely.com/social-preview.jpg',
   theme: {
     bg: '#121214', card: '#1b1b1e', line: '#2e2e34', text: '#e4e4e7', muted: '#a1a1aa', accent: '#e0a868', size: '17px',
@@ -38,7 +38,8 @@ const SITE = {
           title: text(t.title) || 'Untitled', day: parseInt(t.day, 10) || 0, date: text(t.date),
           url: mediaUrl(t.path), fileName: t.path.split('/').pop(),
           genre: text(t.genre), bpm: text(t.bpm), key: text(t.key), vocals: text(t.vocals),
-          description: text(t.description), chords: text(t.chords), lyrics: text(t.lyrics)
+          description: text(t.description), chords: text(t.chords), lyrics: text(t.lyrics),
+          notCC0: t.notCC0 === true, licenseNote: text(t.licenseNote)
         });
       }
     }
@@ -74,7 +75,7 @@ function beatPage(song, older, newer) {
   const when = formatDate(song.date);
   const label = [song.day ? `Day ${song.day}` : '', when].filter(Boolean).join(' · ');
   const facts = [song.genre, song.bpm && `${song.bpm} BPM`, song.key && `Key: ${song.key}`, song.vocals].filter(Boolean);
-  const description = `“${song.title}”, ${song.day ? `day ${song.day} of ` : ''}Shalone's daily beats${when ? ` (${when})` : ''}${song.genre ? `: ${song.genre.toLowerCase()}` : ''}${song.bpm ? `, ${song.bpm} BPM` : ''}. Human-made, free to hear, download and reuse under CC0 (public domain).`;
+  const description = `“${song.title}”, ${song.day ? `day ${song.day} of ` : ''}Shalone's daily beats${when ? ` (${when})` : ''}${song.genre ? `: ${song.genre.toLowerCase()}` : ''}${song.bpm ? `, ${song.bpm} BPM` : ''}. ${song.notCC0 ? 'Human-made, free to hear. Not CC0.' : 'Human-made, free to hear, download and reuse under CC0 (public domain).'}`;
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'MusicRecording',
@@ -85,7 +86,7 @@ function beatPage(song, older, newer) {
     ...(song.date ? { datePublished: song.date } : {}),
     ...(song.genre ? { genre: song.genre } : {}),
     audio: { '@type': 'AudioObject', contentUrl: song.url },
-    license: CC0,
+    ...(song.notCC0 ? {} : { license: CC0 }),
     ...(song.lyrics ? { recordingOf: { '@type': 'MusicComposition', name: song.title, lyrics: { '@type': 'CreativeWork', text: song.lyrics } } } : {})
   };
   const nav = [newer && ['Newer', newer], older && ['Older', older]].filter(Boolean);
@@ -101,6 +102,7 @@ function beatPage(song, older, newer) {
           <a class="btn btn-primary" href="${esc(song.mainLink)}">Open in the full player</a>
           <a class="btn" href="${esc(song.url)}" download="${esc(song.fileName)}">Download</a>
         </div>
+        ${song.notCC0 ? `<h2>License</h2><p class="text">Not CC0${song.licenseNote ? `: ${esc(song.licenseNote)}` : '. Please don’t reuse this one without asking.'}</p>` : ''}
         ${song.description ? `<h2>Notes</h2><p class="text">${esc(song.description)}</p>` : ''}
         ${song.chords ? `<h2>Chords</h2><p class="text chords">${esc(song.chords)}</p>` : ''}
         ${song.lyrics ? `<h2>Lyrics</h2><p class="text">${esc(song.lyrics)}</p>` : ''}

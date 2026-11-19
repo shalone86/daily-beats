@@ -1,6 +1,6 @@
 # Shalone's Daily Beats
 
-> A beat a day: electronic, pop, hip-hop and lofi instrumentals and songs from a daily music challenge. Every track is released under CC0 1.0 (public domain). You may download, copy, remix and redistribute everything, for any purpose, with no attribution required.
+> A beat a day: electronic, pop, hip-hop and lofi instrumentals and songs from a daily music challenge. Every track is released under CC0 1.0 (public domain) except where noted: a track with `"notCC0": true` in the catalog is not, and its `licenseNote` says why. You may download, copy, remix and redistribute every other track, for any purpose, with no attribution required.
 
 The website (https://shalonely.com) builds its track list with JavaScript, so the raw HTML has few links. Use the catalog file below instead. Everything is served from https://daily.shalonely.com/.
 
@@ -12,7 +12,7 @@ The website (https://shalonely.com) builds its track list with JavaScript, so th
 
 - [catalog.json](https://daily.shalonely.com/catalog.json): a JSON list holding one album whose `tracks` are every beat.
 
-Each track has `title`, `path` (the MP3), `day` (its day number in the challenge), `date` (YYYY-MM-DD), `genre` (Electronic, Pop, Hip-Hop or Lofi), `vocals` ("Vocal", "Instrumental", or empty when not yet marked), and, when known, `bpm`, `key`, `chords`, `lyrics` and `description`.
+Each track has `title`, `path` (the MP3), `day` (its day number in the challenge), `date` (YYYY-MM-DD), `genre` (Electronic, Pop, Hip-Hop or Lofi), `vocals` ("Vocal", "Instrumental", or empty when not yet marked), and, when known, `bpm`, `key`, `chords`, `lyrics` and `description`. A track that isn't CC0 also has `"notCC0": true` and, usually, a `licenseNote`.
 
 All paths are relative to https://daily.shalonely.com/ and should be URL-encoded. There are no album ZIPs; download tracks one by one.
 
@@ -31,7 +31,7 @@ def get(path):
     req = urllib.request.Request(BASE + urllib.parse.quote(path), headers=HEADERS)
     return urllib.request.urlopen(req).read()
 for track in json.loads(get("catalog.json"))[0]["tracks"]:
-    if track.get("genre") == "Lofi":
+    if track.get("genre") == "Lofi" and not track.get("notCC0"):
         open(track["path"].split("/")[-1], "wb").write(get(track["path"]))
 ```
 

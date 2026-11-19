@@ -26,7 +26,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Shalone's Daily Beats — Public Domain Music Archive</title>
-  <meta name="description" content="Beat vault and daily music challenge released under CC0 Public Domain for all creative works." />
+  <meta name="description" content="Beat vault and daily music challenge released under CC0 Public Domain, except where noted." />
   <link rel="alternate" type="application/json" title="Music catalog (every album and song)" href="https://daily.shalonely.com/catalog.json" />
   <link rel="help" type="text/plain" title="How to download the music" href="/llms.txt" />
   <link rel="canonical" href="https://shalonely.com/" />
@@ -34,7 +34,7 @@
   <!-- Open Graph -->
   <meta property="og:url" content="https://shalonely.com/" />
   <meta property="og:title" content="Shalone's Daily Beats — Public Domain Music Archive" />
-  <meta property="og:description" content="Beat vault and daily music challenge released under CC0 Public Domain for all creative works." />
+  <meta property="og:description" content="Beat vault and daily music challenge released under CC0 Public Domain, except where noted." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="https://shalonely.com/social-preview.jpg" />
   <meta name="twitter:card" content="summary_large_image" />
@@ -44,7 +44,7 @@
     "@context": "https://schema.org",
     "@type": "PodcastSeries",
     "name": "Shalone's Daily Beat Challenge Archive",
-    "description": "Shalone's daily beats: a new 100% human-made beat almost every day since September 2025, in lofi, hip-hop, pop and electronic styles, all released under CC0 (public domain).",
+    "description": "Shalone's daily beats: a new 100% human-made beat almost every day since September 2025, in lofi, hip-hop, pop and electronic styles, released under CC0 (public domain) except where noted.",
     "url": "https://shalonely.com",
     "webFeed": "https://daily.shalonely.com/podcast.xml",
     "image": "https://shalonely.com/social-preview.jpg"
@@ -404,6 +404,8 @@
       line-height: 1.5;
       word-break: break-word;
     }
+    .meta-badge.not-cc0 { color: #e57373; border-color: rgba(229, 115, 115, 0.45); }
+    .track-license { font-size: 0.85rem; color: #e57373; line-height: 1.5; word-break: break-word; }
     .track-desc a { color: var(--accent); text-decoration: underline; }
     .track-desc a:hover { color: var(--accent-hover); }
 
@@ -1260,7 +1262,7 @@
     <header>
       <h1 class="site-title">Shalone's Daily Beats</h1>
       <p class="hero-mission">
-        Beat vault & daily composition archive. Royalty Free and Public Domain.
+        Beat vault & daily composition archive. Royalty Free and Public Domain, except where noted.
       </p>
       <p class="hero-tip">⬇ <a href="https://daily.shalonely.com/Daily_Beats_Complete_Archive.zip">Download Everything</a> — the full archive, updated daily. Warning: huge file (1GB+), may take a while.</p>
     </header>
@@ -2033,6 +2035,9 @@
             chords: parsed.chords,
             lyrics: parsed.lyrics,
             description: parsed.description,
+            // Set in the song studio for songs that aren't CC0 (e.g. a sample).
+            notCC0: t.notCC0 === true,
+            licenseNote: text(t.licenseNote),
             genre: text(t.genre),
             url: `${MEDIA_BASE}/${encodeURI(filePath)}`
           });
@@ -2273,11 +2278,13 @@
               ${bpmHtml}
               ${keyHtml}
               ${dateHtml}
+              ${song.notCC0 ? `<span class="meta-badge not-cc0" title="This one isn't public domain">Not CC0</span>` : ''}
             </div>
           </div>
           ${chordsHtml}
           ${lyricsHtml}
           ${song.description ? `<div class="track-desc">${linkifyText(song.description)}</div>` : ''}
+          ${song.notCC0 ? `<div class="track-license">Not CC0${song.licenseNote ? `: ${linkifyText(song.licenseNote)}` : '. Please don’t reuse this one without asking.'}</div>` : ''}
           <div class="track-actions">
             <button class="play-btn" data-idx="${globalIdx}" onclick="togglePlayFromList(${globalIdx})">${globalIdx === currentTrackIndex && !audio.paused ? '⏸ Pause' : '▶ Play'}</button>
             <button class="btn-queue${queuedClass}" onclick="toggleQueueTrack(${globalIdx})" title="Add to queue">
