@@ -404,6 +404,8 @@
       line-height: 1.5;
       word-break: break-word;
     }
+    .track-desc a { color: var(--accent); text-decoration: underline; }
+    .track-desc a:hover { color: var(--accent-hover); }
 
     .track-actions {
       display: flex;
@@ -1644,6 +1646,25 @@
       }
     }
 
+    // Comment text is shown as plain text (so stray < or & can't break the
+    // page), with any web address turned into a link that opens in a new tab.
+    // Trailing punctuation like "." or ")" stays outside the link.
+    function linkifyText(raw) {
+      const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      const urlRe = /\b(?:https?:\/\/|www\.)[^\s<>"]+/gi;
+      let out = '', last = 0, m;
+      while ((m = urlRe.exec(raw)) !== null) {
+        let url = m[0];
+        const trail = url.match(/[.,;:!?)\]'"]+$/);
+        if (trail) url = url.slice(0, -trail[0].length);
+        const href = /^www\./i.test(url) ? `https://${url}` : url;
+        out += esc(raw.slice(last, m.index));
+        out += `<a href="${esc(href)}" target="_blank" rel="noopener noreferrer">${esc(url)}</a>`;
+        last = m.index + url.length;
+      }
+      return out + esc(raw.slice(last));
+    }
+
     function parseTrackText(rawText, explicitChords, explicitLyrics) {
       let extractedChords = [];
       let extractedLyrics = [];
@@ -2256,7 +2277,7 @@
           </div>
           ${chordsHtml}
           ${lyricsHtml}
-          ${song.description ? `<div class="track-desc">${song.description}</div>` : ''}
+          ${song.description ? `<div class="track-desc">${linkifyText(song.description)}</div>` : ''}
           <div class="track-actions">
             <button class="play-btn" data-idx="${globalIdx}" onclick="togglePlayFromList(${globalIdx})">${globalIdx === currentTrackIndex && !audio.paused ? '⏸ Pause' : '▶ Play'}</button>
             <button class="btn-queue${queuedClass}" onclick="toggleQueueTrack(${globalIdx})" title="Add to queue">
