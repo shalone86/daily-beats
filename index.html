@@ -2284,7 +2284,7 @@
           ${chordsHtml}
           ${lyricsHtml}
           ${song.description ? `<div class="track-desc">${linkifyText(song.description)}</div>` : ''}
-          ${song.notCC0 ? `<div class="track-license">Not CC0${song.licenseNote ? `: ${linkifyText(song.licenseNote)}` : '. Please don’t reuse this one without asking.'}</div>` : ''}
+          ${song.notCC0 ? `<div class="track-license">Not CC0${song.licenseNote ? `: ${linkifyText(song.licenseNote)}` : ': not for sale or general reuse. Use in non-commercial projects at your own risk.'}</div>` : ''}
           <div class="track-actions">
             <button class="play-btn" data-idx="${globalIdx}" onclick="togglePlayFromList(${globalIdx})">${globalIdx === currentTrackIndex && !audio.paused ? '⏸ Pause' : '▶ Play'}</button>
             <button class="btn-queue${queuedClass}" onclick="toggleQueueTrack(${globalIdx})" title="Add to queue">

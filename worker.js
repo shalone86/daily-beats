@@ -102,7 +102,7 @@ function beatPage(song, older, newer) {
           <a class="btn btn-primary" href="${esc(song.mainLink)}">Open in the full player</a>
           <a class="btn" href="${esc(song.url)}" download="${esc(song.fileName)}">Download</a>
         </div>
-        ${song.notCC0 ? `<h2>License</h2><p class="text">Not CC0${song.licenseNote ? `: ${esc(song.licenseNote)}` : '. Please don’t reuse this one without asking.'}</p>` : ''}
+        ${song.notCC0 ? `<h2>License</h2><p class="text">Not CC0${song.licenseNote ? `: ${esc(song.licenseNote)}` : ': not for sale or general reuse. Use in non-commercial projects at your own risk.'}</p>` : ''}
         ${song.description ? `<h2>Notes</h2><p class="text">${esc(song.description)}</p>` : ''}
         ${song.chords ? `<h2>Chords</h2><p class="text chords">${esc(song.chords)}</p>` : ''}
         ${song.lyrics ? `<h2>Lyrics</h2><p class="text">${esc(song.lyrics)}</p>` : ''}
