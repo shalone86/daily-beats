@@ -240,6 +240,9 @@ export default {
     const url = new URL(request.url);
     let parts;
     try { parts = url.pathname.split('/').filter(Boolean).map(decodeURIComponent); } catch (e) { parts = []; }
+    // the installed apps' own addresses (their scopes), served without the redirect to the short URL
+    if (url.pathname === '/index.html') return env.ASSETS.fetch(new Request(new URL('/', url), request));
+    if (url.pathname === '/kids.html') return env.ASSETS.fetch(new Request(new URL('/kids', url), request));
     try {
       if (url.pathname === '/sitemap.xml') return sitemapResponse(SITE.sitemap(await loadCatalog()));
       if (parts[0] === 'listen' && parts.length === 2) {

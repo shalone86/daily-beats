@@ -7,6 +7,10 @@
   "compatibility_date": "2026-10-13",
   "assets": {
     "directory": ".",
-    "binding": "ASSETS"
+    "binding": "ASSETS",
+    // /index.html and /kids.html are where the installed apps open (their
+    // scopes, so the music apps under /boba, /pop and /night stay separate
+    // apps). worker.js serves them as they are, without the usual redirect.
+    "run_worker_first": ["/index.html", "/kids.html"]
   }
 }
