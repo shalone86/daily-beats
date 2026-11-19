@@ -1,7 +1,8 @@
 {
   "name": "Shalone's Beats",
   "short_name": "Shalone",
-  "start_url": "/",
+  "start_url": "/index.html",
+  "scope": "/index.html",
   "id": "/",
   "icons": [
     {
