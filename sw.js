@@ -1,4 +1,4 @@
-const CACHE_NAME = 'beats-pwa-v7';
+const CACHE_NAME = 'beats-pwa-v8';
 
 // Core assets required for the app shell to load offline
 const ASSETS_TO_CACHE = [
@@ -43,9 +43,9 @@ self.addEventListener('fetch', (event) => {
 
   const url = new URL(event.request.url);
 
-  // The music apps under this domain (Boba Beats, Deep Drift, Pop Pads, Voice Booth)
+  // The music apps under this domain (Boba Beats, Deep Drift, Pop Pads, Voice Booth; /night is Deep Drift's old address)
   // are their own apps with their own offline copies: leave their files alone.
-  if (/^\/(boba|night|pop|record)(\/|$)/.test(url.pathname)) return;
+  if (/^\/(boba|drift|night|pop|record)(\/|$)/.test(url.pathname)) return;
 
   // Network-first for the page shell itself (ensures deploys are visible
   // immediately without waiting on stale-while-revalidate's extra reload),
